@@ -1,0 +1,692 @@
+{
+	"info": {
+		"_postman_id": "976ab32f-9892-4a77-8822-931967a52aef",
+		"name": "SYSMAP_BACKEND",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
+		"_exporter_id": "34540840",
+		"_collection_link": "https://sysmap-4356.postman.co/workspace/33807f27-dd1e-4e29-b5d2-aa67bb239e87/collection/34540840-976ab32f-9892-4a77-8822-931967a52aef?action=share&source=collection_link&creator=34540840"
+	},
+	"item": [
+		{
+			"name": "activities",
+			"item": [
+				{
+					"name": "/activities",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImNkYmE2NGVhLTQ5OWYtNDlhOS04NGM4LTY2MWU2NmZhYTM1ZCIsImlhdCI6MTc0MzI4NzY1NiwiZXhwIjoxNzQzMzc0MDU2fQ.8qavqudmo3ETOmwanxTuvHZW3hBnTXcpvV4je3VGIlA"
+							}
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{local}}/activities",
+							"host": [
+								"{{local}}"
+							],
+							"path": [
+								"activities"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "0",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/activities/all",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImNkYmE2NGVhLTQ5OWYtNDlhOS04NGM4LTY2MWU2NmZhYTM1ZCIsImlhdCI6MTc0MzI4NzY1NiwiZXhwIjoxNzQzMzc0MDU2fQ.8qavqudmo3ETOmwanxTuvHZW3hBnTXcpvV4je3VGIlA"
+							}
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{local}}/activities/all",
+							"host": [
+								"{{local}}"
+							],
+							"path": [
+								"activities",
+								"all"
+							],
+							"query": [
+								{
+									"key": "",
+									"value": "0",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/activities/types",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjE2YzdjMDc4LTk1N2EtNDk2ZS05N2IwLTJlZDc2NDgxNGE1NyIsImlhdCI6MTc0MzI4NzYxMiwiZXhwIjoxNzQzMzc0MDEyfQ.5IAa4s3tHehWFERPdfw7aq5xtYxokRidrrfASC-4b2I"
+							}
+						},
+						"method": "GET",
+						"header": [],
+						"url": "{{local}}/activities/types"
+					},
+					"response": []
+				},
+				{
+					"name": "/activities/user/creator",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Ijg0NjBkODJlLTJjZjYtNGI2ZC1hN2MzLTNiODgzNDRhMjBhMiIsImlhdCI6MTc0MzE4NTQyMywiZXhwIjoxNzQzMjcxODIzfQ.lmGii13E_RfCE4cQ7FzcrxIEoQARAGPl_TgU8zgU8PY"
+							}
+						},
+						"method": "GET",
+						"header": [],
+						"url": "{{local}}/activities/user/creator"
+					},
+					"response": []
+				},
+				{
+					"name": "/activities/user/creator/all",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Ijg0NjBkODJlLTJjZjYtNGI2ZC1hN2MzLTNiODgzNDRhMjBhMiIsImlhdCI6MTc0MzE4NTQyMywiZXhwIjoxNzQzMjcxODIzfQ.lmGii13E_RfCE4cQ7FzcrxIEoQARAGPl_TgU8zgU8PY"
+							}
+						},
+						"method": "GET",
+						"header": [],
+						"url": "{{local}}/activities/user/creator/all"
+					},
+					"response": []
+				},
+				{
+					"name": "/activities/user/participant",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Ijg0NjBkODJlLTJjZjYtNGI2ZC1hN2MzLTNiODgzNDRhMjBhMiIsImlhdCI6MTc0MzE4NTQyMywiZXhwIjoxNzQzMjcxODIzfQ.lmGii13E_RfCE4cQ7FzcrxIEoQARAGPl_TgU8zgU8PY"
+							}
+						},
+						"method": "GET",
+						"header": [],
+						"url": "{{local}}/activities/user/participant"
+					},
+					"response": []
+				},
+				{
+					"name": "/activities/user/participant/all",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Ijg0NjBkODJlLTJjZjYtNGI2ZC1hN2MzLTNiODgzNDRhMjBhMiIsImlhdCI6MTc0MzE4NTQyMywiZXhwIjoxNzQzMjcxODIzfQ.lmGii13E_RfCE4cQ7FzcrxIEoQARAGPl_TgU8zgU8PY"
+							}
+						},
+						"method": "GET",
+						"header": [],
+						"url": "{{local}}/activities/user/participant/all"
+					},
+					"response": []
+				},
+				{
+					"name": "/activities/:id/participants",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjAwYTQwMzIxLWFhYzgtNGE4NC1iMmQzLTljODNhZjRhZmM2OSIsImlhdCI6MTc0MzIwNjUyNywiZXhwIjoxNzQzMjkyOTI3fQ.W4SmOajij1G5-t0JySqd3maUoFTmyumEIZsaiugNsm4"
+							}
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{local}}/activities/:id/participants",
+							"host": [
+								"{{local}}"
+							],
+							"path": [
+								"activities",
+								":id",
+								"participants"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "cac53019-19cd-427d-9232-04b69298599f"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/activities/new",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImNkYmE2NGVhLTQ5OWYtNDlhOS04NGM4LTY2MWU2NmZhYTM1ZCIsImlhdCI6MTc0MzI4NzY1NiwiZXhwIjoxNzQzMzc0MDU2fQ.8qavqudmo3ETOmwanxTuvHZW3hBnTXcpvV4je3VGIlA"
+							}
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "title",
+									"value": "Atividade de CIclismo",
+									"type": "text"
+								},
+								{
+									"key": "description",
+									"value": "Ciclismo em amigos",
+									"type": "text"
+								},
+								{
+									"key": "address",
+									"value": "40.1244, -24.2039",
+									"type": "text"
+								},
+								{
+									"key": "image",
+									"type": "file",
+									"src": "/C:/Users/walla/Downloads/Ciclismo.jpg"
+								},
+								{
+									"key": "typeId",
+									"value": "c812c877-56ad-4622-9b24-46c24f390210",
+									"type": "text"
+								},
+								{
+									"key": "scheduledDate",
+									"value": "2025-04-05T10:00:00Z",
+									"type": "text"
+								},
+								{
+									"key": "private",
+									"value": "false",
+									"type": "text"
+								}
+							]
+						},
+						"url": "{{local}}/activities/new"
+					},
+					"response": []
+				},
+				{
+					"name": "/activities/:id/update",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImU5NzUxNGI0LTFiZmQtNDRhOC04YjFmLTA4NzlkMDlhMDczYiIsImlhdCI6MTc0MzIwNjM2OCwiZXhwIjoxNzQzMjkyNzY4fQ.AdG-1Uvbn-xlid3zoEDffl_VPVLhtILxT7HniCgvUR0"
+							}
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "title",
+									"value": "Atividade Na Praia",
+									"type": "text"
+								},
+								{
+									"key": "description",
+									"value": "Pratica ne natação da praia com colegas",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "address",
+									"value": "40.2244, -64.9019",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "image",
+									"type": "file",
+									"src": "/C:/Users/walla/Downloads/id1_n_906664308fe64b25fd46b0d1fa26b5d9.jpg",
+									"disabled": true
+								},
+								{
+									"key": "typeId",
+									"value": "253847e6-beaa-46c5-a875-e458ac61c9bf",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "scheduledDate",
+									"value": "2025-03-30T10:00:00Z",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "private",
+									"value": "true",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{local}}/activities/:id/update",
+							"host": [
+								"{{local}}"
+							],
+							"path": [
+								"activities",
+								":id",
+								"update"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "e9d857e8-d70a-4ce5-a703-cee11599e15c",
+									"description": "ID da atividade a ser atualizada."
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/activities/:id/subscribe",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImNkYmE2NGVhLTQ5OWYtNDlhOS04NGM4LTY2MWU2NmZhYTM1ZCIsImlhdCI6MTc0MzI4NzY1NiwiZXhwIjoxNzQzMzc0MDU2fQ.8qavqudmo3ETOmwanxTuvHZW3hBnTXcpvV4je3VGIlA"
+							}
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{local}}/activities/:id/subscribe",
+							"host": [
+								"{{local}}"
+							],
+							"path": [
+								"activities",
+								":id",
+								"subscribe"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "3f7f8a48-7007-4c22-9d8d-942d7517af7f"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/activities/:id/conclude",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjE2YzdjMDc4LTk1N2EtNDk2ZS05N2IwLTJlZDc2NDgxNGE1NyIsImlhdCI6MTc0MzI4NzYxMiwiZXhwIjoxNzQzMzc0MDEyfQ.5IAa4s3tHehWFERPdfw7aq5xtYxokRidrrfASC-4b2I"
+							}
+						},
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "{{local}}/activities/:id/conclude",
+							"host": [
+								"{{local}}"
+							],
+							"path": [
+								"activities",
+								":id",
+								"conclude"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "3f7f8a48-7007-4c22-9d8d-942d7517af7f"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/activities/:id/approve",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjE2YzdjMDc4LTk1N2EtNDk2ZS05N2IwLTJlZDc2NDgxNGE1NyIsImlhdCI6MTc0MzI4NzYxMiwiZXhwIjoxNzQzMzc0MDEyfQ.5IAa4s3tHehWFERPdfw7aq5xtYxokRidrrfASC-4b2I"
+							}
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"participantId\": \"cdba64ea-499f-49a9-84c8-661e66faa35d\",\r\n    \"approved\": true\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{local}}/activities/:id/approve",
+							"host": [
+								"{{local}}"
+							],
+							"path": [
+								"activities",
+								":id",
+								"approve"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "3f7f8a48-7007-4c22-9d8d-942d7517af7f"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/activities/:id/check-in",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImNkYmE2NGVhLTQ5OWYtNDlhOS04NGM4LTY2MWU2NmZhYTM1ZCIsImlhdCI6MTc0MzI4NzY1NiwiZXhwIjoxNzQzMzc0MDU2fQ.8qavqudmo3ETOmwanxTuvHZW3hBnTXcpvV4je3VGIlA"
+							}
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"confirmationCode\": \"D2A8D3\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{local}}/activities/:id/check-in",
+							"host": [
+								"{{local}}"
+							],
+							"path": [
+								"activities",
+								":id",
+								"check-in"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "3f7f8a48-7007-4c22-9d8d-942d7517af7f"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/activities/:id/unsubscribe",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjAwYTQwMzIxLWFhYzgtNGE4NC1iMmQzLTljODNhZjRhZmM2OSIsImlhdCI6MTc0MzIwNjUyNywiZXhwIjoxNzQzMjkyOTI3fQ.W4SmOajij1G5-t0JySqd3maUoFTmyumEIZsaiugNsm4"
+							}
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{local}}/activities/:id/unsubscribe",
+							"host": [
+								"{{local}}"
+							],
+							"path": [
+								"activities",
+								":id",
+								"unsubscribe"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "cac53019-19cd-427d-9232-04b69298599f"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "activities/:id/delete",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImU5NzUxNGI0LTFiZmQtNDRhOC04YjFmLTA4NzlkMDlhMDczYiIsImlhdCI6MTc0MzIwNjM2OCwiZXhwIjoxNzQzMjkyNzY4fQ.AdG-1Uvbn-xlid3zoEDffl_VPVLhtILxT7HniCgvUR0"
+							}
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{local}}/activities/:id/delete",
+							"host": [
+								"{{local}}"
+							],
+							"path": [
+								"activities",
+								":id",
+								"delete"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "e9d857e8-d70a-4ce5-a703-cee11599e15c"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "auth",
+			"item": [
+				{
+					"name": "/auth/register",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"wallace\",\r\n    \"email\": \"walacesantanak0@gmail.com\",\r\n    \"cpf\": \"11326037579\",\r\n    \"password\": \"123@pass\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{local}}/auth/register"
+					},
+					"response": []
+				},
+				{
+					"name": "/auth/sign-in",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\": \"walacesantanak0@gmail.com\",\r\n    \"password\": \"123@pass\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{local}}/auth/sign-in"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "user",
+			"item": [
+				{
+					"name": "/user",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjE2YzdjMDc4LTk1N2EtNDk2ZS05N2IwLTJlZDc2NDgxNGE1NyIsImlhdCI6MTc0MzI4NzYxMiwiZXhwIjoxNzQzMzc0MDEyfQ.5IAa4s3tHehWFERPdfw7aq5xtYxokRidrrfASC-4b2I"
+							}
+						},
+						"method": "GET",
+						"header": [],
+						"url": "{{local}}/user"
+					},
+					"response": []
+				},
+				{
+					"name": "/user/preferences",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjE2YzdjMDc4LTk1N2EtNDk2ZS05N2IwLTJlZDc2NDgxNGE1NyIsImlhdCI6MTc0MzI4NzYxMiwiZXhwIjoxNzQzMzc0MDEyfQ.5IAa4s3tHehWFERPdfw7aq5xtYxokRidrrfASC-4b2I"
+							}
+						},
+						"method": "GET",
+						"header": [],
+						"url": "{{local}}/user/preferences"
+					},
+					"response": []
+				},
+				{
+					"name": "/user/preferences/define",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjE2YzdjMDc4LTk1N2EtNDk2ZS05N2IwLTJlZDc2NDgxNGE1NyIsImlhdCI6MTc0MzI4NzYxMiwiZXhwIjoxNzQzMzc0MDEyfQ.5IAa4s3tHehWFERPdfw7aq5xtYxokRidrrfASC-4b2I"
+							}
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"typeIds\": [\"ee6630ad-a578-4843-b497-5e316b7e4437\", \"c812c877-56ad-4622-9b24-46c24f390210\"]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{local}}/user/preferences/define"
+					},
+					"response": []
+				},
+				{
+					"name": "/user/avatar",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjE2YzdjMDc4LTk1N2EtNDk2ZS05N2IwLTJlZDc2NDgxNGE1NyIsImlhdCI6MTc0MzI4NzYxMiwiZXhwIjoxNzQzMzc0MDEyfQ.5IAa4s3tHehWFERPdfw7aq5xtYxokRidrrfASC-4b2I"
+							}
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "avatar",
+									"type": "file",
+									"src": "/C:/Users/walla/OneDrive/Imagens/work/Untitled image.jpeg"
+								}
+							]
+						},
+						"url": "{{local}}/user/avatar"
+					},
+					"response": []
+				},
+				{
+					"name": "/user/update",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImM0MTFlYTJkLTc1YTAtNDE1Mi04YWU1LTQwY2NiOGY0Nzg4ZiIsImRlbGV0ZWRBdCI6bnVsbCwiaWF0IjoxNzQyNzUzNTY3LCJleHAiOjE3NDI4Mzk5Njd9.me-pHsT-MjRZUTdoy_LLqu4P_Z-LfYz5twyV0bx99SI"
+							}
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"walas sants\",\r\n    \"email\": \"wallacesantanak99@gmail.com\",\r\n    \"password\": \"1234@pass\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{local}}/user/update"
+					},
+					"response": []
+				},
+				{
+					"name": "/user/desactivate",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImYyNzk0Y2Y1LTg0ODYtNGYwNS1hMjY2LWI2ZTg1N2FkMzM4MiIsImlhdCI6MTc0Mjc1NTgxNCwiZXhwIjoxNzQyODQyMjE0fQ.Do6BGBspGf-hpInv7RcB_B7bj132G0sRaiJcSMkq0Fs"
+							}
+						},
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"walas sants\",\r\n    \"email\": \"wallacesantanak99@gmail.com\",\r\n    \"password\": \"1234@pass\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{local}}/user/desactivate"
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}

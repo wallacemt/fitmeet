@@ -1,0 +1,46 @@
+services:
+  postgresql:
+    image: postgres
+    container_name: "db"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: bootcamp
+    ports:
+      - 5432:5432
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  localStack: 
+    image: localstack/localstack
+    container_name: localStack
+    ports:
+      - "4566:4566"
+    environment:
+      SERVICES: s3
+      AWS_REGION: us-east-1
+      WS_ACESS_KEY: test
+      AWS_SECRET_ACESS_KEY: test
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"  
+    restart: always
+
+  api:
+    build: 
+          context: .
+          dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    depends_on:
+      - postgresql
+    env_file:
+      - .env
+    environment:
+      DATABASE_URL: postgresql://postgres:postgres@postgresql:5432/bootcamp?schema=public
+      S3_ENDPOINT: http://localStack:4566 
+    
+    restart: always
+
+
+volumes:
+  postgres_data: 
