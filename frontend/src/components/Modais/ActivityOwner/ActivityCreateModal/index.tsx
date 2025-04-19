@@ -6,26 +6,24 @@ import { useNewActivity } from "@/hooks/useNewActivity";
 import { Carousel, CarouselContent, CarouselItem } from "@/components/ui/carousel";
 import { ActivityIcon } from "@/components/utils/ActivityIcon/ActivityIcon";
 
-import { useEffect, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 import { Image } from "lucide-react";
 import { LocationPickerMap } from "../../../utils/LocationPickerMap";
-import { ActivityType } from "@/types/ActivityData";
+import { ActivityResponse, ActivityType } from "@/types/ActivityData";
 import { useActivities } from "@/hooks/useActivities";
 
-const modalHasCreated = {
-  title: "Crossfit",
-  description:
-    " Lorem ipsum dolor sit amet, consectetur adipisicing elit. Recusandae possimus tempore consectetur numquam modi similique deserunt nihil consequatur? Officiis fuga, accusantium reprehenderit veniam laudantium voluptatum. Corrupti aliquam incidunt laborum consectetur voluptas commodi, harum nihil illum, natus laboriosam, quisquam saepe reiciendis. Qui repellat animi id architecto cumque reprehenderit quia sapiente reiciendis!",
-  address: ["-23.532", "-46.625"],
-  image:
-    "https://s3-alpha-sig.figma.com/img/751f/89e9/da95373f6eb2271dac57bcf9fb89f71f?Expires=1745798400&Key-Pair-Id=APKAQ4GOSFWCW27IBOMQ&Signature=kNfaVdNLPbT3FTmZ5V46QVaUMB29QfQigLssK5YwLNTifSfiwAHf-lId~bMcyTxNwR6hk0yzCgB9dao5aR31djbr0n8OFphLw1v2JmlIMs04paPqW1tPkFg1SsyiOtZAIlzLVX0lZOLaCGHsxMKLv7GaJOu4uqLkqLru9FCYoUG1CmsiK9VJ8~Sdzhl8Z0w0Qyv5rPfWGrFUHheOuETTJ7hV9XQSJZ03DnOuczcOQ6LQ16brWdAc1TgmY8iG1DlCld99Us-qNSqGnQ8ZFWGuqvD0Zj2bEEolQHDDXKq~eq1KZubA4c8iQLi4u-Ohl9a9Je0aobly8mqHzcBE45gA-Q__",
-  typeId: "1",
-  scheduledDate: "2025-04-27T13:10",
-  private: true,
-};
-
-export const ActivityCreateModal = ({ openModal, setOpenModal, modalType = "create" }: any) => {
+export const ActivityCreateModal = ({
+  openModal,
+  setOpenModal,
+  modalType = "create",
+  activity,
+}: {
+  openModal: boolean;
+  setOpenModal: (openModal: boolean) => void;
+  modalType?: "create" | "edit";
+  activity?: ActivityResponse;
+}) => {
   const form = useNewActivity();
   const [preview, setPreview] = useState<string | null>(null);
   const [activityType, setActivityType] = useState<ActivityType[]>();
@@ -33,13 +31,19 @@ export const ActivityCreateModal = ({ openModal, setOpenModal, modalType = "crea
 
   useEffect(() => {
     if (modalType === "edit") {
-      form.setValue("title", modalHasCreated.title);
-      form.setValue("description", modalHasCreated.description);
-      form.setValue("scheduledDate", modalHasCreated.scheduledDate);
-      form.setValue("address", modalHasCreated.address);
-      form.setValue("private", modalHasCreated.private);
-      setPreview(modalHasCreated.image);
-      form.setValue("typeId", modalHasCreated.typeId);
+      form.setValue("title", activity?.title || "");
+      form.setValue("description", activity?.description || "");
+      form.setValue(
+        "scheduledDate",
+        activity?.scheduleDate ? new Date(activity.scheduleDate).toISOString().slice(0, -5) : ""
+      );
+      form.setValue("address", [
+        activity?.address.latitude.toString() || "",
+        activity?.address.longitude.toString() || "",
+      ]);
+      form.setValue("private", activity?.private || true);
+      setPreview(activity?.image || null);
+      form.setValue("typeId", activity?.type || "");
     }
     const getActivitiesTypes = async () => {
       const response = await useAct.getActivitiesTypes();
@@ -50,6 +54,13 @@ export const ActivityCreateModal = ({ openModal, setOpenModal, modalType = "crea
 
   const onSubmit = form.onSubmit;
 
+  const handleEdit = async (e: FormEvent) => {
+    e.preventDefault();
+    const response = await form.onSubmitEdit(form.getValues(), activity?.id!);
+    if (response) {
+      setOpenModal(false);
+    }
+  };
   return (
     <Dialog open={openModal} onOpenChange={setOpenModal}>
       <DialogContent
@@ -67,7 +78,7 @@ export const ActivityCreateModal = ({ openModal, setOpenModal, modalType = "crea
         </DialogHeader>
         <Form {...form}>
           <form
-            onSubmit={form.handleSubmit(onSubmit)}
+            onSubmit={modalType === "create" ? form.handleSubmit(onSubmit) : handleEdit}
             className="space-y-4 w-full text-lg font-secundaria text-[#404040 flex flex-col flex-wrap"
           >
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -265,7 +276,7 @@ export const ActivityCreateModal = ({ openModal, setOpenModal, modalType = "crea
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel className="text-lg font-secundaria text-[#404040 font-semibold">
-                        Requer aprovação para participar? * <span className="text-perigo">*</span>
+                        Requer aprovação para participar? <span className="text-perigo">*</span>
                       </FormLabel>
                       <FormControl>
                         <div className="flex items-center gap-4 mt-2">
@@ -326,8 +337,8 @@ export const ActivityCreateModal = ({ openModal, setOpenModal, modalType = "crea
                   )}
                 </Button>
                 <Button
-                  type="submit"
                   className="disabled:cursor-not-allowed text-base bg-primaria w-full max-w-2xs p-6 h-12 mt-4 hover:bg-primaria/80 flex items-center justify-center rounded-md mx-auto lg:mx-0 self-end-safe cursor-pointer"
+                  onClick={() => form.onSubmitEdit(form.getValues(), activity?.id!)}
                 >
                   {form.loading ? (
                     <div className="animate-spin h-5 w-5 border-b-2 border-[#F9370B] rounded-full" />

@@ -12,9 +12,11 @@ const formSchema = z.object({
   email: z.string().email({ message: "Preencha o campo com seu e-mail" }).min(2).max(50),
   password: z.string().min(6, { message: "Preencha o campo com sua senha" }).max(50),
   preference: z.array(z.string()).min(1, { message: "Selecione pelo menos uma preferência" }),
-  avatar: z.instanceof(File).refine((file) => file.size > 0, {
-    message: "Selecione uma imagem",
-  }),
+  avatar: z.optional(
+    z.instanceof(File).refine((file) => file.size > 0, {
+      message: "Selecione uma imagem",
+    })
+  ),
 });
 export const useEdit = () => {
   const { user, handleUpdate, logout } = useContext(UserContext);
@@ -62,8 +64,10 @@ export const useEdit = () => {
       console.log(values);
       const userPromise = editUser(values.name, values.email, values.password);
       const preferencePromise = definePreferences(values.preference);
-      const avatarPromise = editAvatar(values.avatar);
-      await Promise.all([userPromise, preferencePromise, avatarPromise]);
+      if (values.avatar) {
+        const avatarPromise = await editAvatar(values.avatar);
+      }
+      await Promise.all([userPromise, preferencePromise]);
       setMessage("Editado com sucesso!");
       return handleUpdate();
     } catch (error: any) {

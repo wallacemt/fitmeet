@@ -53,7 +53,7 @@ export const HomeComponent = () => {
           data-aos="fade-left"
         >
           {Array.isArray(recomendedActivities) && recomendedActivities.length > 0 ? (
-            recomendedActivities.map((item) => <RecomendedCard key={item.id} item={item} />)
+            recomendedActivities.filter((item) => item.isSelf === false).map((item) => <RecomendedCard key={item.id} item={item} />)
           ) : (
             <EmptySection message="Nehuma Atividade Recomendada Encontrada" />
           )}
@@ -95,7 +95,7 @@ export const HomeComponent = () => {
                   .filter((activity) => activity.type === typeItem.name)
                   .map((activity) => <ActivityCard key={activity.id} item={activity} />)
               ) : (
-                <EmptySection message="Nehuma Atividade Encontrada para esse Tipo." size={20} />
+                <EmptySection message="Nehuma Atividade Encontrada para esse Tipo." size={24} />
               )}
             </div>
           </div>

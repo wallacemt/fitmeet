@@ -1,6 +1,6 @@
 import { Card, CardFooter, CardTitle } from "@/components/ui/card";
 
-import { Calendar, LockIcon, Users } from "lucide-react";
+import { Calendar, LockIcon, User, Users } from "lucide-react";
 import { useState } from "react";
 import { ActivityParticipantModal } from "../../Modais/ActivityParticipantModal";
 export const RecomendedCard = ({ item }: any) => {
@@ -23,6 +23,7 @@ export const RecomendedCard = ({ item }: any) => {
             <LockIcon size={20} />
           </div>
         )}
+
         <div className="flex flex-col items-start px-2  mb-8 font-secundaria">
           <CardTitle className="text-lg font-bold ">{item.title}</CardTitle>
           <CardFooter className="p-0 mt-2 text-xs text-muted-foreground gap-2">

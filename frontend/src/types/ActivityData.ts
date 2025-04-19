@@ -31,11 +31,12 @@ export interface ActivityResponse {
   confirmationCode: string;
   participantCount: number;
   address: ActivityAddress;
-  scheduledDate: string;
+  scheduleDate: string;
   createdAt: string;
   completedAt: string;
   private: boolean;
   creator: ActivityCreator;
+  isSelf: boolean;
   userSubscriptionStatus: string | null;
 }
 

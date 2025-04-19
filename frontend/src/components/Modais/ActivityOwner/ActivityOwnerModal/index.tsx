@@ -18,7 +18,6 @@ export const ActivityOwnerModal = ({ isOpen, onClose, activity }: any) => {
   useEffect(() => {
     const getAcParticipants = async () => {
       const response = await useAct.getActivityParticipants(activity.id);
-      console.log(response);
       setParticipants(response);
     };
 
@@ -29,7 +28,12 @@ export const ActivityOwnerModal = ({ isOpen, onClose, activity }: any) => {
   return (
     <>
       {isModalEdit && (
-        <ActivityCreateModal openModal={isModalEdit} setOpenModal={setIsModalEdit} modalType={modalType} />
+        <ActivityCreateModal
+          openModal={isModalEdit}
+          setOpenModal={setIsModalEdit}
+          modalType={modalType}
+          activity={activity}
+        />
       )}
       <Dialog open={isOpen} onOpenChange={onClose}>
         <DialogContent
@@ -48,14 +52,12 @@ export const ActivityOwnerModal = ({ isOpen, onClose, activity }: any) => {
 
               {/* TÍTULO */}
               <div>
-                <h2 className="font-principal	font-normal text-3xl ">Título</h2>
-                <p className="text-base">{activity.title}</p>
+                <h2 className="font-principal	font-normal text-3xl ">{activity.title}</h2>
               </div>
 
               {/* DESCRIÇÃO */}
               <div className="">
-                <h2 className="text-lg font-semibold">Descrição</h2>
-                <p className="text-base text-justify">{activity.description}</p>
+                <p className="text-base text-justify font-secundaria">{activity.description}</p>
               </div>
 
               {/* DADOS */}
@@ -64,7 +66,7 @@ export const ActivityOwnerModal = ({ isOpen, onClose, activity }: any) => {
                   <CalendarDays size={22} className="text-primaria" />{" "}
                   {new Intl.DateTimeFormat("pt-BR", {
                     day: "2-digit",
-                    month: "2-digit",
+                    month: "long",
                     year: "numeric",
                     hour: "2-digit",
                     minute: "2-digit",
@@ -74,13 +76,13 @@ export const ActivityOwnerModal = ({ isOpen, onClose, activity }: any) => {
                   <Users size={22} className="text-primaria" /> {participants?.length} Participantes
                 </p>
                 <p className="flex items-center gap-2">
-                  {activity.private ? (
+                  {activity.private === true ? (
                     <>
-                      <LockOpen size={22} className="text-primaria" /> Atividade Pública
+                      < LockKeyhole size={22} className="text-primaria" /> Mediante aprovação
                     </>
                   ) : (
                     <>
-                      <LockKeyhole size={22} className="text-primaria" /> Mediante aprovação
+                      <LockOpen size={22} className="text-primaria" /> Atividade Pública
                     </>
                   )}
                 </p>

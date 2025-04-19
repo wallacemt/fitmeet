@@ -101,6 +101,33 @@ export const createActivity = async (activity: ActivityTypeNew): Promise<Activit
   }
 };
 
+export const editActivity = async (activity: ActivityTypeNew, activityId: string): Promise<ActivityResponse> => {
+  try {
+    const activityCreate = new HttpClient({
+      baseUrl: `http://localhost:3000/activities/${activityId}/update`,
+    });
+    setAuthHeader(activityCreate);
+
+    const formData = new FormData();
+    formData.append("title", activity.title);
+    formData.append("description", activity.description);
+    formData.append("address", activity.address.join(","));
+    formData.append("typeId", activity.typeId);
+    formData.append("scheduledDate", activity.scheduledDate.toString());
+    formData.append("private", activity.private.toString());
+    formData.append("image", activity.imageFile);
+
+    console.log("formData", Object.fromEntries(formData));
+
+    const response = await activityCreate.put<ActivityResponse>("", formData);
+
+    return response.data;
+  } catch (err: any) {
+    console.error(err.message);
+    throw err;
+  }
+};
+
 export const getActivityParticipant = async (activityId: string): Promise<Participant[] | undefined> => {
   try {
     const response = await activitiesApi.get<Participant[]>(`/${activityId}/participants`);

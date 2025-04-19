@@ -57,5 +57,30 @@ export const useNewActivity = () => {
     }
   };
 
-  return { ...form, onSubmit, loading, error, setError, message, setMessage };
+  const onSubmitEdit = async (values: z.infer<typeof formSchema>, activityId: string) => {
+    setLoading(true);
+    const activity: ActivityTypeNew = {
+      title: values.title,
+      description: values.description,
+      address: values.address,
+      imageFile: values.image,
+      typeId: values.typeId,
+      scheduledDate: values.scheduledDate,
+      private: values.private,
+    };
+    try {
+      const response = await createActivity(activity);
+      setMessage("Atividade Editada!");
+
+      console.log(response);
+      return response;
+    } catch (error: any) {
+      console.error("Erro ao enviar formulário:", error);
+      setError(String(error.message));
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return { ...form, onSubmit, loading, error, setError, message, setMessage, onSubmitEdit };
 };
