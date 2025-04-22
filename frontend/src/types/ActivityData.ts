@@ -69,9 +69,15 @@ export interface ActivityType {
 }
 export interface Participant {
   id: string;
+  activityId: string;
   userId: string;
-  name: string;
-  avatar: string;
+  approved: boolean;
+  approvedAt: string | null;
+  confirmedAt: string | null;
+  user: {
+    id: string;
+    name: string;
+    avatar: string;
+  };
   subscriptionStatus: string;
-  confirmedAt: string;
 }

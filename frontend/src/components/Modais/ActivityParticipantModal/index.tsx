@@ -1,19 +1,23 @@
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { CalendarDays, LockKeyhole, LockOpen, Users } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { ViewLocationMap } from "@/components/utils/ViewLocationMap";
 import { useActivities } from "@/hooks/useActivities";
 import { ActivityResponse, Participant } from "@/types/ActivityData";
+import { UserContext } from "@/contexts/UserContext";
+import { ActivityButtonFactory } from "@/components/ActivityButtons";
 
 export const ActivityParticipantModal = ({ isOpen, onClose, activityId }: any) => {
   const [participants, setParticipants] = useState<Participant[] | undefined>();
   const [activity, setActivity] = useState<ActivityResponse | undefined>();
+  const {handleUpdate, update, user} = useContext(UserContext)
   const useAct = useActivities();
 
   useEffect(() => {
     const getAcParticipants = async () => {
       const response = await useAct.getActivityParticipants(activityId);
+      console.log(response)
       setParticipants(response);
     };
 
@@ -25,9 +29,12 @@ export const ActivityParticipantModal = ({ isOpen, onClose, activityId }: any) =
     fetchActivity();
 
     getAcParticipants();
-  }, []);
-
-  console.log(activity);
+  }, [update]);
+  const hadnleSubscribeActivity = () => {
+    useAct.subscribeActivity(activityId).then(() => {
+      handleUpdate();
+    });
+  };
   return (
     <>
       <Dialog open={isOpen} onOpenChange={onClose}>
@@ -79,15 +86,7 @@ export const ActivityParticipantModal = ({ isOpen, onClose, activityId }: any) =
                   )}
                 </p>
               </div>
-              <Button
-                type="button"
-                className="text-base font-bold  bg-primaria  w-full max-w-2xs p-6 h-12 mt-2 flex items-center justify-center rounded-md hover:scale-105 hover:bg-primaria transition duration-300 ease-in-out cursor-pointer relative lg:mx-0 mx-auto"
-                onClick={() => {
-                  console.log("Participando");
-                }}
-              >
-                Participar
-              </Button>
+              <ActivityButtonFactory activity={activity!} participants={participants || []} user={user} onClik={hadnleSubscribeActivity}/>
             </div>
 
             {/* COLUNA DIREITA */}
@@ -127,15 +126,16 @@ export const ActivityParticipantModal = ({ isOpen, onClose, activityId }: any) =
                       {/* Imagem */}
                       <div className="w-14 h-14 border-2 border-primaria rounded-full">
                         <img
-                          src={participant.avatar}
-                          alt={participant.name}
+                          src={participant?.user.avatar}
+                          alt={participant?.user.name}
                           className="h-full w-full font-secundaria rounded-full object-cover border"
                         />
                       </div>
 
                       {/* Nome */}
                       <div className="flex-1">
-                        <p className="text-[1rem]  font-medium text-[#404040]">{participant.name}</p>
+                        <p className="text-[1rem]  font-medium text-[#404040]">{user?.id === participant?.user.id ? "Eu" : participant?.user.name}</p>
+                          {activity?.private && <span className="text-sm font-secundaria">{participant?.approved ? "Participante" : "Pendente"}</span>}
                       </div>
                     </div>
                   ))}

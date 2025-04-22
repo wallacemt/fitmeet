@@ -179,6 +179,7 @@ export const activitySubscribe = async (actId: string) => {
   try {
     setAuthHeader(activitiesApi);
     const response = await activitiesApi.post(`/${actId}/subscribe`);
+    console.log(response);
     return response.data as string;
   } catch (err: any) {
     console.error(err.message);

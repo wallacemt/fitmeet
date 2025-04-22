@@ -1,4 +1,5 @@
 import {
+  activitySubscribe,
   cancelActivity,
   getActivitiesPag,
   getActivitiesType,
@@ -93,6 +94,16 @@ export const useActivities = () => {
     }
   };
 
+  const subscribeActivity = async (actId: string) => {
+    try {
+      const response = await activitySubscribe(actId);
+      return response;
+    } catch (err: any) {
+      console.error(err.message);
+      throw err;
+    }
+  }
+
   const getActivityParticipants = async (activityId: string): Promise<Participant[] | undefined> => {
     try {
       const response = await getActivityParticipant(activityId);
@@ -123,5 +134,6 @@ export const useActivities = () => {
     getActByType,
     cancelAct,
     getActById,
+    subscribeActivity
   };
 };
