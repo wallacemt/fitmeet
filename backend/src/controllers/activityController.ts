@@ -7,11 +7,48 @@ import { activityType, activityTypeUpdate } from "../types/activityData";
 const activityController = (server: Express) => {
   const router = Router();
   router.use(authValidator);
-
+  
+  router.get("/all", async (req, res) => {
+    try {
+      const { filterBy, filter, orderBy, order } = req.query as {
+        filterBy: string;
+        filter: string;
+        orderBy: string;
+        order: string;
+      };
+      
+      const activities = await activityService.getActivitiesAll(filterBy, filter, orderBy, order, req.userId);
+      console.log(activities);
+      res.status(200).json(activities);
+    } catch (error) {
+      console.error("Erro ao buscar atividades:", error);
+      res.status(500).json({ error: "Erro inesperado." });
+    }
+  });
   router.get("/types", async (req, res) => {
     try {
       const types = await activityService.getActivityTypes();
       res.status(200).json(types);
+    } catch (error) {
+      const status = (error as any).status || 500;
+      res.status(status).json({ error: (error as any).error || "Erro inesperado." });
+    }
+  });
+
+  router.get("/types/:id", async (req, res) => {
+    try {
+      const type = await activityService.getActivityByTypeId(req.params.id, req.userId);
+      res.status(200).json(type);
+    } catch (error) {
+      const status = (error as any).status || 500;
+      res.status(status).json({ error: (error as any).error || "Erro inesperado." });
+    }
+  });
+
+  router.get("/:id", async (req, res) => {
+    try {
+      const activity = await activityService.getActivitiesById(req.params.id, req.userId);
+      res.status(200).json(activity);
     } catch (error) {
       const status = (error as any).status || 500;
       res.status(status).json({ error: (error as any).error || "Erro inesperado." });
@@ -22,12 +59,12 @@ const activityController = (server: Express) => {
       const { type, orderBy, order, page, pageSize } = req.query;
 
       const result = await activityService.getActivities(
+        page ? parseInt(page as string, 10) : 0,
+        pageSize ? parseInt(pageSize as string, 10) : 10,
+        req.userId,
         type as string,
         orderBy as string,
         order as "asc" | "desc",
-        page ? parseInt(page as string, 10) : 0,
-        pageSize ? parseInt(pageSize as string, 10) : 10,
-        req.userId
       );
 
       res.status(200).json(result);
@@ -37,22 +74,6 @@ const activityController = (server: Express) => {
     }
   });
 
-  router.get("/all", async (req, res) => {
-    try {
-      const { filterBy, filter, orderBy, order } = req.query as {
-        filterBy: string;
-        filter: string;
-        orderBy: string;
-        order: string;
-      };
-
-      const activities = await activityService.getctivitiesAll(filterBy, filter, orderBy, order, req.userId);
-      res.status(200).json(activities);
-    } catch (error) {
-      console.error("Erro ao buscar atividades:", error);
-      res.status(500).json({ error: "Erro inesperado." });
-    }
-  });
 
   router.get("/user/creator", async (req, res) => {
     try {
@@ -80,6 +101,7 @@ const activityController = (server: Express) => {
       };
       const id = req.userId;
       const activities = await activityService.getUserActivitiesAll(id, filterBy, filter, orderBy, order);
+
       res.status(200).json(activities);
     } catch (error) {
       console.error("Erro ao buscar atividades:", error);
@@ -275,7 +297,7 @@ const activityController = (server: Express) => {
     }
   });
 
-  server.use("/activities", router);
+  server.use("/activities", router, authValidator);
 };
 
 export default activityController;

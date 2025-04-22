@@ -19,8 +19,8 @@ services:
     environment:
       SERVICES: s3
       AWS_REGION: us-east-1
-      WS_ACESS_KEY: test
-      AWS_SECRET_ACESS_KEY: test
+      AWS_ACCESS_KEY_ID: test
+      AWS_SECRET_ACCESS_KEY: test
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock"  
     restart: always
@@ -38,7 +38,6 @@ services:
     environment:
       DATABASE_URL: postgresql://postgres:postgres@postgresql:5432/bootcamp?schema=public
       S3_ENDPOINT: http://localStack:4566 
-    
     restart: always
 
 

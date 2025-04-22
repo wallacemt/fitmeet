@@ -41,7 +41,7 @@ export async function seed() {
         description: "Partidas de futebol entre amigos ou profissionais.",
         image: `${BUCKET_URL}/futebooll.jpg`
       }
-    ].filter((type) => !existingTypes.some((existingType) => existingType.name === type.name));
+    ].filter((type) => !existingTypes.some((existingType: any) => existingType.name === type.name));
 
 
     const existingAchievements = await prisma.achievement.findMany();
@@ -66,7 +66,7 @@ export async function seed() {
         name: "Alterou Foto de Perfil",
         criterion: "Alterar a foto de perfil pela primeira vez.",
       },
-    ].filter((achievement) => !existingAchievements.some((existingAchievement) => existingAchievement.name === achievement.name));
+    ].filter((achievement) => !existingAchievements.some((existingAchievement: any) => existingAchievement.name === achievement.name));
 
     if (typesToCreate.length > 0) {
       await prisma.activityType.createMany({

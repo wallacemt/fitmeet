@@ -12,21 +12,22 @@ export const activityService = {
     return await activityTypesRepository.getAll();
   },
   getActivities: async (
-    type?: string,
-    orderBy?: string,
-    order?: "asc" | "desc",
     page: number = 0,
     pageSize: number = 10,
-    userId?: string
+    userId: string,
+    type?: string,
+    orderBy?: string,
+    order?: "asc" | "desc"
   ) => {
-    const activitiesRes = await activityRepository.getActivities(type, orderBy, order, page, pageSize);
-    const total = await activityRepository.countActivities(type);
+    const activitiesRes = await activityRepository.getActivities(page, pageSize, userId, type, orderBy, order);
+    const total = await activityRepository.countActivities(userId, type );
     const totalPages = Math.ceil(total / pageSize);
     const previous = page > 1 ? page - 1 : null;
     const next = page < Math.ceil(total / pageSize) ? page + 1 : null;
+    
 
     const activities = await Promise.all(
-      activitiesRes.map(async (activity) => {
+      activitiesRes.map(async (activity: any) => {
         const status = await activityParticipantsRepository.getUserSubscriptionStatus(userId!, activity.id);
         const userStatus: UserSubscriptionStatus =
           status?.approvedAt === null
@@ -72,9 +73,9 @@ export const activityService = {
     };
   },
 
-  getctivitiesAll: async (
-    filterBy: string | undefined,
-    filter: string | undefined,
+  getActivitiesAll: async (
+    filterBy: string,
+    filter: string,
     orderByField: string,
     direction: string,
     userId?: string
@@ -87,15 +88,14 @@ export const activityService = {
     );
 
     const activities = await Promise.all(
-      activitiesRes.map(async (activity) => {
+      activitiesRes.map(async (activity: any) => {
         const status = await activityParticipantsRepository.getUserSubscriptionStatus(userId!, activity.id);
         const userStatus: UserSubscriptionStatus =
-          status?.approved === null
+          status?.approvedAt === null
             ? UserSubscriptionStatus.PENDING
             : status?.approved === false
             ? UserSubscriptionStatus.REJECTED
             : UserSubscriptionStatus.ACCEPTED;
-
         return {
           id: activity.id,
           title: activity.title,
@@ -134,7 +134,7 @@ export const activityService = {
     const next = page < Math.ceil(total / pageSize) ? page + 1 : null;
 
     const activities = await Promise.all(
-      activitiesRes.map(async (activity) => ({
+      activitiesRes.map(async (activity: any) => ({
         id: activity.id,
         title: activity.title,
         description: activity.description,
@@ -185,7 +185,7 @@ export const activityService = {
     );
 
     const activities = await Promise.all(
-      activitiesRes.map(async (activity) => ({
+      activitiesRes.map(async (activity: any) => ({
         id: activity.id,
         title: activity.title,
         description: activity.description,
@@ -234,6 +234,77 @@ export const activityService = {
     };
   },
 
+  getActivityByTypeId: async (type: string, userId: string) => {
+    const activity = await activityRepository.getActivityByType(type);
+    if (!activity) {
+      throw { error: "Atividade nao encontrada.", status: 404 };
+    }
+    return await Promise.all(
+      activity.map(async (activity: any) => ({
+        id: activity.id,
+        title: activity.title,
+        description: activity.description,
+        type: activity.type.name,
+        image: activity.image,
+        confirmationCode: activity.confirmationCode,
+        participantCount: await activityRepository.getParticipantCountByActivityId(activity.id),
+        address: {
+          latitude: activity.address?.latitude,
+          longitude: activity.address?.longitude,
+        },
+        scheduleDate: activity.scheduledDate,
+        createdAt: activity.createdAt,
+        completedAt: activity.completedAt,
+        private: activity.private,
+        creator: {
+          id: activity.creator.id,
+          name: activity.creator.name,
+          avatar: activity.creator.avatar,
+        },
+        isSelf: activity.creatorId === userId,
+      }))
+    );
+  },
+
+  getActivitiesById: async (id: string, userId: string) => {
+    const activity = await activityRepository.getActivityById(id);
+    if (!activity) throw { error: "Atividade nao encontrada.", status: 404 };
+
+    const status = await activityParticipantsRepository.getUserSubscriptionStatus(userId!, activity.id);
+    const userStatus: UserSubscriptionStatus =
+      status?.approvedAt === null
+        ? UserSubscriptionStatus.PENDING
+        : status?.approved === false
+        ? UserSubscriptionStatus.REJECTED
+        : UserSubscriptionStatus.ACCEPTED;
+
+    return {
+      id: activity.id,
+      title: activity.title,
+      description: activity.description,
+      type: activity.type,
+      image: activity.image,
+      confirmationCode: activity.confirmationCode,
+      participantCount: await activityRepository.getParticipantCountByActivityId(activity.id),
+      address: {
+        latitude: activity.address?.latitude,
+        longitude: activity.address?.longitude,
+      },
+      scheduleDate: activity.scheduledDate,
+      createdAt: activity.createdAt,
+      completedAt: activity.completedAt,
+      private: activity.private,
+      creator: {
+        id: activity.creator.id,
+        name: activity.creator.name,
+        avatar: activity.creator.avatar,
+      },
+      isSelf: activity.creatorId === userId,
+      userSubscriptionStatus:
+        userId !== activity.creatorId ? (status?.approved === undefined ? null : userStatus) : undefined,
+    };
+  },
+
   getActivitiesUserParticipantAll: async (
     id: string,
     filterBy: string,
@@ -253,9 +324,12 @@ export const activityService = {
 
   getParticipantsByActivityId: async (activityId: string) => {
     const activityParticipant = await activityParticipantsRepository.getParticipantsByActivityId(activityId);
-    console.log(activityParticipant)
+
     if (!activityParticipant) throw { error: "Atividade não encontrada.", status: 404 };
-    return activityParticipant;
+    return activityParticipant.map((participant) => ({
+      ...participant,
+      subscriptionStatus: participant.approved ? UserSubscriptionStatus.ACCEPTED : UserSubscriptionStatus.PENDING,
+    }));
   },
 
   createActivity: async (activityData: activityType) => {
@@ -267,11 +341,11 @@ export const activityService = {
 
     activityData.image = await uploadImage(imageFile);
 
-    const typeId = await activityTypesRepository.getById(activityData.typeId);
-    if(!typeId) throw { error: "Tipo de atividade nao encontrado.", status: 404 };
+    const typeId = await activityTypesRepository.getByIdOrName(activityData.typeId);
+    if (!typeId) throw { error: "Tipo de atividade nao encontrado.", status: 404 };
 
     const countActivities = await activityRepository.countUserActivities(activityData.userId);
-    if(countActivities === 0){
+    if (countActivities === 0) {
       await unlockAchiviment(activityData.userId, "Primeira Atividade Criada");
     }
     const activity = await activityRepository.create({
@@ -312,10 +386,12 @@ export const activityService = {
       imageUrl = await uploadImage(imageFile);
     }
 
+    const realTypeId = await activityTypesRepository.getByIdOrName(activityData.typeId || "");
+
     const activityTransfer: Partial<activityType> = {
       title: activityData.title,
       description: activityData.description,
-      typeId: activityData.typeId,
+      typeId: realTypeId?.id,
       image: imageUrl,
       scheduledDate: activityData.scheduledDate,
       private: activityData.private,
@@ -328,7 +404,7 @@ export const activityService = {
       id: activityUpdate.id,
       title: activityUpdate.title,
       description: activityUpdate.description,
-      type: activityUpdate.typeId,
+      typeId: await activityTypesRepository.getByIdOrName(activityUpdate.typeId),
       image: activityUpdate.image,
       address: {
         latitude: activityUpdate.address?.latitude,
@@ -376,23 +452,22 @@ export const activityService = {
     if (activity.creatorId !== userId) throw { error: "Apenas o criador da atividade pode concluir-la.", status: 403 };
     if (activity.completedAt) throw { error: "Atividade ja concluida.", status: 409 };
 
-    const activitiesCompleted = await activityRepository.countConcludeActivityByUser(userId)
+    const activitiesCompleted = await activityRepository.countConcludeActivityByUser(userId);
 
-    if(activitiesCompleted === 0) {
+    if (activitiesCompleted === 0) {
       unlockAchiviment(userId, "Atividade Concluída");
     }
     const activityParticipants = await activityParticipantsRepository.getParticipantsByActivityId(activityId);
 
-    activityParticipants.map(async (participant) => {
+    activityParticipants.map(async (participant: any) => {
       addXp(participant.userId, 15);
-    })
+    });
     addXp(userId, 20);
     await activityRepository.concludeActivity(activityId);
     return;
   },
 
   approveParticipant: async (id: string, participantId: string, approved: boolean, userId: string) => {
-    console.log(participantId, approved);
     if (!participantId || approved == null)
       throw { error: "Informe os campos obrigatóprios corretamente.", status: 400 };
 
@@ -422,19 +497,17 @@ export const activityService = {
 
     const userCheckins = await activityParticipantsRepository.getUserConfirmedActivities(userId);
 
-    if(userCheckins.length === 0){
+    if (userCheckins.length === 0) {
       await unlockAchiviment(userId, "Primeiro Check-in");
     }
     await addXp(userId, 10);
     await addXp(activity.creatorId, 5);
 
-    
     await activityParticipantsRepository.activityCheckin(status?.id!);
     return;
   },
 
   unsubscribeFromActivity: async (activityId: string, userId: string) => {
-  
     const activity = await activityRepository.getActivityById(activityId);
     if (!activity) throw { error: "Atividade nao encontrada.", status: 404 };
 

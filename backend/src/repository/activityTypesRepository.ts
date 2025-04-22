@@ -8,7 +8,14 @@ export const activityTypesRepository = {
         return prisma.activityType.findMany();
     },
 
-    getById: async (id: string) => {
-        return prisma.activityType.findFirst({ where: { id } });
+    getByIdOrName: async (idOrName: string) => {
+        return prisma.activityType.findFirst({
+            where: {
+                OR: [
+                    { id: idOrName },
+                    { name: { contains: idOrName, mode: "insensitive" } },
+                ],
+            },
+        });
     }
 }

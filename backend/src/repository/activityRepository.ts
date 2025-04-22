@@ -1,19 +1,25 @@
 import { prisma } from "../prisma/prismaClient";
 import { activityType, activityTypeUpdate } from "../types/activityData";
 import { confirmationCode } from "../utils/confirmationCodeGenerate";
+import { preferenceRepository } from "./preferenceRepository";
 
 export const activityRepository = {
   getActivities: async (
+    page: number = 0,
+    pageSize: number = 10,
+    userId: string,
     type?: string,
     orderBy?: string,
     order?: "asc" | "desc",
-    page: number = 0,
-    pageSize: number = 10
   ) => {
     const skip = page * pageSize;
+    const userPreferences = await preferenceRepository.getUserPreferences(userId);
     return prisma.activity.findMany({
-      where: type ? { type: { name: type } } : {},
-      orderBy: orderBy ? { [orderBy]: order || "asc" } : { createdAt: "desc" },
+      where: {
+        creatorId: { not: userId },
+        ...(type ? { type: { name: type } } : {}),
+      },
+      orderBy: orderBy ? { [orderBy]: order || "asc" } : { createdAt: "desc" } ,
       skip,
       take: pageSize,
       include: {
@@ -31,8 +37,8 @@ export const activityRepository = {
   },
 
   getAllActivities: async (
-    filterBy: string | undefined,
-    filter: string | undefined,
+    filterBy: string,
+    filter: string,
     orderByField: string,
     direction: string
   ) => {
@@ -62,6 +68,30 @@ export const activityRepository = {
     });
   },
 
+  getActivityByType: async (type: string) => {
+    return await prisma.activity.findMany({
+      where: {
+        OR: [
+          { typeId: type },
+          { type: { name: { contains: type, mode: "insensitive" } } },
+        ],
+      },
+      include: {
+        type: true,
+        address: true,
+        creator: {
+          select: {
+            id: true,
+            name: true,
+            avatar: true,
+          },
+        },
+      },
+    });
+  },
+
+  
+
   getPaginated: async (take: number, skip: number) => {
     return await prisma.activity.findMany({
       take,
@@ -69,8 +99,13 @@ export const activityRepository = {
     });
   },
 
-  countActivities: async (type?: string) => {
-    return prisma.activity.count({ where: type ? { type: { name: type } } : {} });
+  countActivities: async (userId: string, type?: string ) => {
+    return prisma.activity.count({ 
+      where: {
+        creatorId: { not: userId },
+        ...(type ? { type: { name: type } } : {})
+      }
+    });
   },
 
   getUserActivities: async (userId: string, page: number = 0, pageSize: number = 10) => {
@@ -138,13 +173,12 @@ export const activityRepository = {
       },
     });
   },
- 
 
   countUserActivities: async (userId: string) => {
     return prisma.activity.count({ where: { creatorId: userId } });
   },
   countConcludeActivityByUser: async (userId: string) => {
-    return prisma.activity.count({where: {creatorId: userId, completedAt: {not: null}}})
+    return prisma.activity.count({ where: { creatorId: userId, completedAt: { not: null } } });
   },
 
   create: async (activityData: activityType) => {
@@ -232,33 +266,30 @@ export const activityRepository = {
     });
   },
 
-  subscribeToActivity: async (activityId: string, userId:string, approved:boolean) => {
+  subscribeToActivity: async (activityId: string, userId: string, approved: boolean) => {
     return prisma.activityParticipant.create({
       data: {
         activityId,
         userId,
         approved,
       },
-    })
+    });
   },
 
-  findUserSubscription: async(activityId: string, userId:string) => {
+  findUserSubscription: async (activityId: string, userId: string) => {
     return prisma.activityParticipant.findFirst({
       where: {
         activityId,
-        userId
-      }
-    })
+        userId,
+      },
+    });
   },
   concludeActivity: async (activityId: string) => {
     return prisma.activity.update({
-      where: {id: activityId},
+      where: { id: activityId },
       data: {
-        completedAt: new Date()
-      }
-    })
+        completedAt: new Date(),
+      },
+    });
   },
-
-  
- 
 };

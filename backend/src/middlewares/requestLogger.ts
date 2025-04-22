@@ -11,7 +11,6 @@ export const requestLogger = (req: Request, res: Response, next: NextFunction) =
   console.log("🔹 URL:", req.originalUrl);
   console.log("🔹 Corpo:", JSON.stringify(req.body, null, 2));
 
-  // Capturando a resposta ao final do ciclo
   const originalSend = res.send;
   res.send = function (body) {
     const end = performance.now();

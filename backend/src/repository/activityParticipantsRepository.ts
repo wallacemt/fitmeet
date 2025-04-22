@@ -77,6 +77,7 @@ export const activityParticipantsRepository = {
             avatar: true,
           },
         },
+       
       },
     });
   },

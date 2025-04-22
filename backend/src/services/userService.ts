@@ -21,7 +21,7 @@ export const userService = {
       avatar: user.avatar,
       xp: user.xp,
       level: user.level,
-      achievements: user.achievements.map((a) => ({
+      achievements: user.achievements.map((a: any) => ({
         name: a.achievement.name,
         criterion: a.achievement.criterion,
       })),
@@ -68,7 +68,7 @@ export const userService = {
 
   getUserPreferences: async (userId: string) => {
     const userPreference = await preferenceRepository.getUserPreferences(userId);
-    return userPreference.map((preference) => ({
+    return userPreference.map((preference: any) => ({
       typeId: preference.typeId,
       typeName: preference.type.name,
       typeDescription: preference.type.description,
@@ -81,7 +81,7 @@ export const userService = {
     }
 
     const validTypeIds = await activityTypesRepository.findOnes(typeIds);
-    const invalidIds = typeIds.filter((id) => !validTypeIds.map((type) => type.id).includes(id));
+    const invalidIds = typeIds.filter((id) => !validTypeIds.map((type: any) => type.id).includes(id));
     if (invalidIds.length > 0) {
       throw { error: `Um ou mais Ids informados são inválidos.`, status: 400 };
     }

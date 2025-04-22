@@ -22,13 +22,13 @@ export const preferenceRepository = {
       select: { typeId: true },
     });
 
-    const existingTypeIdsSet = new Set(existingPreferences.map(pref => pref.typeId));
+    const existingTypeIdsSet = new Set(existingPreferences.map((pref: { typeId: any; }) => pref.typeId));
     const validTypeIds = await prisma.activityType.findMany({
       where: { id: { in: typeIds } },
       select: { id: true },
     });
 
-    const validTypeIdsSet = new Set(validTypeIds.map(type => type.id));
+    const validTypeIdsSet = new Set(validTypeIds.map((type: { id: any; }) => type.id));
     const filteredTypeIds = typeIds.filter(
       typeId => validTypeIdsSet.has(typeId) && !existingTypeIdsSet.has(typeId)
     );

@@ -51,7 +51,7 @@ export const authService = {
       avatar: user.avatar,
       xp: user.xp,
       level: user.level,
-      achievements: user.achievements.map(a => ({
+      achievements: user.achievements.map((a: { achievement: { name: any; criterion: any; }; }) => ({
         name: a.achievement.name,
         criterion: a.achievement.criterion
       })),
