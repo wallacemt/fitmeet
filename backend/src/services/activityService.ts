@@ -218,7 +218,13 @@ export const activityService = {
     page: number = 0,
     pageSize: number = 10
   ) => {
-    const activities = await activityParticipantsRepository.getUserParticipant(userId, orderBy, order, page, pageSize);
+    const activitiesPages = await activityParticipantsRepository.getUserParticipant(userId, orderBy, order, page, pageSize);
+    const activities = await Promise.all(
+      activitiesPages.map(async (act) => ({
+        ...act,
+        participantCount: await activityRepository.getParticipantCountByActivityId(act.activityId),
+      }))
+    );
     const total = await activityParticipantsRepository.countUserParticipies(userId);
     const totalPages = Math.ceil(total / pageSize);
     const previous = page > 1 ? page - 1 : null;

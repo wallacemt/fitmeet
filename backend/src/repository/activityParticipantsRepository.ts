@@ -21,6 +21,8 @@ export const activityParticipantsRepository = {
             id: true,
             title: true,
             description: true,
+            private: true,
+            image: true,
             scheduledDate: true,
             type: {
               select: {
@@ -37,6 +39,7 @@ export const activityParticipantsRepository = {
               },
             },
           },
+         
         },
       },
     });
