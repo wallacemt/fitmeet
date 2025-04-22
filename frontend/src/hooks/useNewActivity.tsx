@@ -2,7 +2,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useContext, useState } from "react";
-import { createActivity } from "@/services/activitiesApi";
+import { createActivity, editActivity } from "@/services/activitiesApi";
 import { ActivityTypeNew } from "@/types/ActivityData";
 
 const formSchema = z.object({
@@ -63,16 +63,15 @@ export const useNewActivity = () => {
       title: values.title,
       description: values.description,
       address: values.address,
-      imageFile: values.image,
+      imageFile: values.image || undefined,
       typeId: values.typeId,
       scheduledDate: values.scheduledDate,
       private: values.private,
     };
     try {
-      const response = await createActivity(activity);
+      const response = await editActivity(activity, activityId);
       setMessage("Atividade Editada!");
 
-      console.log(response);
       return response;
     } catch (error: any) {
       console.error("Erro ao enviar formulário:", error);

@@ -18,7 +18,7 @@ export const ActivityTypeComponent = ({ type }: any) => {
 
   const [recomendedType, setRecomendedType] = useState<ActivityResponse[]>();
   const [activityType, setActivityType] = useState<ActivityType[]>();
-  const [hasMore, setHasMore] = useState(true);
+  const [hasMore, setHasMore] = useState(false);
   const useAct = useActivities();
 
   useEffect(() => {
@@ -29,10 +29,9 @@ export const ActivityTypeComponent = ({ type }: any) => {
     });
 
     const getActivities = async () => {
-      const response = await useAct.getActivities();
-
-      setHasMore((response && response?.totalPages > response?.page) || false);
-      setRecomendedType(response?.activities);
+      const response = await useAct.getActByType(type);
+      console.log(response)
+      setRecomendedType(response);
     };
 
     const getActivitiesTypes = async () => {
@@ -52,10 +51,8 @@ export const ActivityTypeComponent = ({ type }: any) => {
         </h2>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:self-center lg:grid-cols-4 lg:w-fit gap-4">
-          {Array.isArray(recomendedType) && recomendedType?.filter((item) => item.type === type).length > 0 ? (
-            recomendedType
-              ?.filter((item) => item.type === type)
-              .map((item) => <RecomendedCard key={item.id} item={item} />)
+          {Array.isArray(recomendedType) && recomendedType.length > 0 ? (
+            recomendedType.map((item) => <RecomendedCard key={item.id} item={item} />)
           ) : (
             <div className="relative left-[2rem]">
               <EmptySection message={`Nenhuma Atividade do tipo ${type} encontrada`} />

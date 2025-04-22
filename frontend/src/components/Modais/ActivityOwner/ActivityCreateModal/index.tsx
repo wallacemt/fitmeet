@@ -6,12 +6,13 @@ import { useNewActivity } from "@/hooks/useNewActivity";
 import { Carousel, CarouselContent, CarouselItem } from "@/components/ui/carousel";
 import { ActivityIcon } from "@/components/utils/ActivityIcon/ActivityIcon";
 
-import { FormEvent, useEffect, useState } from "react";
+import { FormEvent, useContext, useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 import { Image } from "lucide-react";
 import { LocationPickerMap } from "../../../utils/LocationPickerMap";
 import { ActivityResponse, ActivityType } from "@/types/ActivityData";
 import { useActivities } from "@/hooks/useActivities";
+import { UserContext } from "@/contexts/UserContext";
 
 export const ActivityCreateModal = ({
   openModal,
@@ -27,6 +28,7 @@ export const ActivityCreateModal = ({
   const form = useNewActivity();
   const [preview, setPreview] = useState<string | null>(null);
   const [activityType, setActivityType] = useState<ActivityType[]>();
+  const { handleUpdate } = useContext(UserContext);
   const useAct = useActivities();
 
   useEffect(() => {
@@ -59,6 +61,7 @@ export const ActivityCreateModal = ({
     const response = await form.onSubmitEdit(form.getValues(), activity?.id!);
     if (response) {
       setOpenModal(false);
+      handleUpdate();
     }
   };
   return (

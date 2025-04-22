@@ -9,7 +9,7 @@ import { Link } from "react-router";
 import { useActivities } from "@/hooks/useActivities";
 import { ActivityResponse } from "@/types/ActivityData";
 export const UserComponent = () => {
-  const { user } = useContext(UserContext);
+  const { user, update } = useContext(UserContext);
   const useAct = useActivities();
   const [userActivities, setUserActivities] = useState<ActivityResponse[]>();
   const [userActivitiesParticipant, setUserActivitiesParticipant] = useState<ActivityResponse[]>();
@@ -26,8 +26,8 @@ export const UserComponent = () => {
     };
     getUserActivitie();
     getUserActivitieParticipant();
-  }, []);
- 
+  }, [update]);
+
   return (
     <HomeContainer>
       <div className="w-full bg-[#f2f2f2] rounded-md relative p-12">
@@ -66,9 +66,9 @@ export const UserComponent = () => {
       <ActivitySection
         activites={userActivitiesParticipant || []}
         title="Historico De Atividades"
-        className="w-fit flex flex-col gap-4"
+        className="w-fit flex flex-col gap-4 mb-12"
         message="Você ainda não participou de nehuma atividade."
-        viewMore={true}
+        viewMore={userActivitiesParticipant && userActivitiesParticipant?.length > 0}
       />
     </HomeContainer>
   );

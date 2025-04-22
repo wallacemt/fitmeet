@@ -9,6 +9,17 @@ export interface ActivityTypeNew {
   private: boolean;
 }
 
+export interface ActivityTypeEdit {
+  id?: string;
+  title: string;
+  description: string;
+  typeId: string;
+  address: Array<string>;
+  imageFile?: File;
+  scheduledDate: string;
+  private: boolean;
+}
+
 export type ActivityTypeUpdate = Partial<ActivityType>;
 
 export interface ActivityAddress {
@@ -37,7 +48,7 @@ export interface ActivityResponse {
   private: boolean;
   creator: ActivityCreator;
   isSelf: boolean;
-  userSubscriptionStatus: string | null;
+  userSubscriptionStatus?: string;
 }
 
 export interface ActivitiesPaginatedResponse {

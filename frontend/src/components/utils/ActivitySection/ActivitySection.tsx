@@ -10,7 +10,7 @@ export const ActivitySection = ({
   className,
   viewMore,
   isOwner,
-  message = "Nemhum dado!",
+  message = "Nenhum dado!",
 }: {
   activites: ActivityResponse[];
   title: string;
@@ -36,7 +36,7 @@ export const ActivitySection = ({
             }
         </div>
         {viewMore && (
-          <Button className="bg-primaria hover:bg-green-700 font-secundaria mt-4 font-bold text-sm w-fit h-12 self-center flex items-center justify-center">
+          <Button className="bg-primaria hover:bg-green-700 font-secundaria mt-4 font-bold text-sm w-fit h-12 self-center flex items-center justify-center cursor-pointer">
             Ver mais <ChevronDown />
           </Button>
         )}

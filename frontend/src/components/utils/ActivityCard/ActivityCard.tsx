@@ -7,7 +7,6 @@ import { useState } from "react";
 
 export const ActivityCard = ({ item, modalType = "visitant" }: any) => {
   const [modalOpen, setModalOpen] = useState(false);
-
   return (
     <>
       <Card
@@ -49,10 +48,11 @@ export const ActivityCard = ({ item, modalType = "visitant" }: any) => {
         </div>
       </Card>
 
-      {modalOpen && modalType === "user" && (
-        <ActivityOwnerModal activity={item} isOpen={modalOpen} onClose={setModalOpen} />
+      {modalOpen && modalType === "user" ? (
+        <ActivityOwnerModal activityId={item.id} isOpen={modalOpen} onClose={setModalOpen} />
+      ) : (
+        <ActivityParticipantModal isOpen={modalOpen} onClose={setModalOpen} activityId={item.id} />
       )}
-      {modalOpen && modalType === "visitant" && <ActivityParticipantModal isOpen={modalOpen} onClose={setModalOpen} />}
     </>
   );
 };

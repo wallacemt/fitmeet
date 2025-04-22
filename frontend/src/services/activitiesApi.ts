@@ -41,10 +41,33 @@ export const getActivitiesPag = async (): Promise<ActivitiesPaginatedResponse> =
   }
 };
 
+export const getActivityById = async (id: string): Promise<ActivityResponse> => {
+  try {
+    setAuthHeader(activitiesApi);
+    const response = await activitiesApi.get(`/${id}`);
+
+    return response.data as ActivityResponse;
+  } catch (err: any) {
+    console.log(err);
+    throw err;
+  }
+};
+
 export const getActivitiesType = async (): Promise<ActivityType[]> => {
   try {
     setAuthHeader(activitiesApi);
     const response = await activitiesApi.get<ActivityType[]>("/types");
+    return response.data;
+  } catch (err: any) {
+    console.error(err.message);
+    throw err;
+  }
+};
+
+export const getActivityByType = async (id: string): Promise<ActivityResponse[]> => {
+  try {
+    setAuthHeader(activitiesApi);
+    const response = await activitiesApi.get<ActivityResponse[]>(`/types/${id}`);
     return response.data;
   } catch (err: any) {
     console.error(err.message);
@@ -115,7 +138,9 @@ export const editActivity = async (activity: ActivityTypeNew, activityId: string
     formData.append("typeId", activity.typeId);
     formData.append("scheduledDate", activity.scheduledDate.toString());
     formData.append("private", activity.private.toString());
-    formData.append("image", activity.imageFile);
+    if (activity.imageFile) {
+      formData.append("image", activity.imageFile);
+    }
 
     console.log("formData", Object.fromEntries(formData));
 
@@ -130,6 +155,7 @@ export const editActivity = async (activity: ActivityTypeNew, activityId: string
 
 export const getActivityParticipant = async (activityId: string): Promise<Participant[] | undefined> => {
   try {
+    setAuthHeader(activitiesApi);
     const response = await activitiesApi.get<Participant[]>(`/${activityId}/participants`);
     return response.data;
   } catch (err: any) {
@@ -137,3 +163,25 @@ export const getActivityParticipant = async (activityId: string): Promise<Partic
     throw err;
   }
 };
+
+export const cancelActivity = async (actId: string): Promise<string> => {
+  try {
+    setAuthHeader(activitiesApi);
+    const response = await activitiesApi.delete(`/${actId}/delete`);
+    return response.data as string;
+  } catch (err: any) {
+    console.error(err.message);
+    throw err;
+  }
+};
+
+export const activitySubscribe = async (actId: string) => {
+  try {
+    setAuthHeader(activitiesApi);
+    const response = await activitiesApi.post(`/${actId}/subscribe`);
+    return response.data as string;
+  } catch (err: any) {
+    console.error(err.message);
+    throw err;
+  }
+}

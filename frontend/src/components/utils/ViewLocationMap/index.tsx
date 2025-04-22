@@ -18,13 +18,13 @@ const SetViewOnly = ({ center }: { center: [number, number] }) => {
   const map = useMap();
 
   useEffect(() => {
-    map.setView(center, 15); // Zoom fixo em 15
-    map.scrollWheelZoom.disable(); // Desabilita scroll com roda do mouse
-    map.dragging.disable(); // Desabilita arrastar o mapa
-    map.doubleClickZoom.disable(); // Desabilita zoom duplo clique
-    map.touchZoom.disable(); // Desabilita zoom por pinch
-    map.boxZoom.disable(); // Desabilita zoom por box
-    map.keyboard.disable(); // Desabilita controles de teclado
+    map.setView(center, 15); 
+    map.scrollWheelZoom.enable();
+    map.dragging.enable(); 
+    map.doubleClickZoom.enable(); 
+    map.touchZoom.enable(); 
+    map.boxZoom.enable(); 
+    map.keyboard.enable(); 
   }, [map, center]);
 
   return null;

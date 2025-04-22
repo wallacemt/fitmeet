@@ -1,11 +1,11 @@
 import { Card, CardFooter, CardTitle } from "@/components/ui/card";
 
-import { Calendar, LockIcon, User, Users } from "lucide-react";
+import { Calendar, LockIcon, Users } from "lucide-react";
 import { useState } from "react";
 import { ActivityParticipantModal } from "../../Modais/ActivityParticipantModal";
 export const RecomendedCard = ({ item }: any) => {
   const [modalOpen, setModalOpen] = useState(false);
-  console.log(item)
+
   return (
     <>
       <Card
@@ -45,7 +45,7 @@ export const RecomendedCard = ({ item }: any) => {
           </CardFooter>
         </div>
       </Card>
-      {modalOpen && <ActivityParticipantModal isOpen={modalOpen} onClose={setModalOpen} />}
+      {modalOpen && <ActivityParticipantModal isOpen={modalOpen} onClose={setModalOpen} activityId={item.id} />}
     </>
   );
 };

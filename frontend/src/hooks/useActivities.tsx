@@ -1,6 +1,9 @@
 import {
+  cancelActivity,
   getActivitiesPag,
   getActivitiesType,
+  getActivityById,
+  getActivityByType,
   getActivityParticipant,
   getAllActivities,
   getUserActivities,
@@ -10,16 +13,23 @@ import { getUserPreferences, updateUserPreferences } from "@/services/userApi";
 import { ActivitiesPaginatedResponse, ActivityResponse, ActivityType, Participant } from "@/types/ActivityData";
 
 export const useActivities = () => {
-  const getActivities = async (): Promise<ActivitiesPaginatedResponse | null> => {
+  const getActivities = async (): Promise<ActivitiesPaginatedResponse | undefined> => {
     try {
       const response = await getActivitiesPag();
       return response;
     } catch (error) {
       console.error("Erro ao buscar atividades:", error);
-      return null;
     }
   };
 
+  const getActById = async (id: string): Promise<ActivityResponse | undefined> => {
+    try {
+      const response = await getActivityById(id);
+      return response;
+    } catch (error) {
+      console.error("Erro ao buscar atividade:", error);
+    }
+  };
   const getAllAct = async (): Promise<ActivityResponse[] | undefined> => {
     try {
       const response = await getAllActivities();
@@ -29,6 +39,14 @@ export const useActivities = () => {
     }
   };
 
+  const getActByType = async (id: string): Promise<ActivityResponse[] | undefined> => {
+    try {
+      const response = await getActivityByType(id);
+      return response;
+    } catch (error) {
+      console.error("Erro ao buscar atividades:", error);
+    }
+  };
   const getActivitiesTypes = async (): Promise<ActivityType[] | undefined> => {
     try {
       const response = await getActivitiesType();
@@ -83,6 +101,16 @@ export const useActivities = () => {
       console.error("Erro ao buscar atividades:", error);
     }
   };
+
+  const cancelAct = async (activityId: string) => {
+    try {
+      const response = await cancelActivity(activityId);
+      return response;
+    } catch (err: any) {
+      console.error(err.message);
+      throw err;
+    }
+  };
   return {
     getActivities,
     getActivitiesTypes,
@@ -92,5 +120,8 @@ export const useActivities = () => {
     getUserActivitie,
     getUserActivitieParticipant,
     getActivityParticipants,
+    getActByType,
+    cancelAct,
+    getActById,
   };
 };
