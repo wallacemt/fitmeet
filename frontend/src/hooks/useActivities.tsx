@@ -9,6 +9,7 @@ import {
   getAllActivities,
   getUserActivities,
   getUserParticipantActivities,
+  updateParticipantStatus,
 } from "@/services/activitiesApi";
 import { getUserPreferences, updateUserPreferences } from "@/services/userApi";
 import { ActivitiesPaginatedResponse, ActivityResponse, ActivityType, Participant } from "@/types/ActivityData";
@@ -94,6 +95,19 @@ export const useActivities = () => {
     }
   };
 
+  const updateStatusParticipant = async (
+    activityId: string,
+    partId: string,
+    approved: boolean
+  ): Promise<string | undefined> => {
+    try {
+      const response = await updateParticipantStatus(activityId, partId, approved);
+      return response;
+    } catch (err: any) {
+      console.error(err.message);
+    }
+  };
+
   const subscribeActivity = async (actId: string) => {
     try {
       const response = await activitySubscribe(actId);
@@ -102,7 +116,7 @@ export const useActivities = () => {
       console.error(err.message);
       throw err;
     }
-  }
+  };
 
   const getActivityParticipants = async (activityId: string): Promise<Participant[] | undefined> => {
     try {
@@ -134,6 +148,7 @@ export const useActivities = () => {
     getActByType,
     cancelAct,
     getActById,
-    subscribeActivity
+    subscribeActivity,
+    updateStatusParticipant
   };
 };

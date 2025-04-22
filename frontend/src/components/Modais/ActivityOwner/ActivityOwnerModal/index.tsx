@@ -39,6 +39,10 @@ export const ActivityOwnerModal = ({ isOpen, onClose, activityId }: any) => {
     });
   };
 
+  const handleApproveParticipant = (actId: string, partId: string, approved: boolean) => {
+    useAct.updateStatusParticipant(actId, partId, approved).then(() => handleUpdate());
+  };
+
   return (
     <>
       {isModalEdit && (
@@ -158,23 +162,29 @@ export const ActivityOwnerModal = ({ isOpen, onClose, activityId }: any) => {
                       {/* Imagem */}
                       <div className="w-14 h-14 border-2 border-primaria rounded-full">
                         <img
-                          src={participant?.avatar}
-                          alt={participant.name}
+                          src={participant?.user.avatar}
+                          alt={participant?.user.name}
                           className="h-full w-full font-secundaria rounded-full object-cover border"
                         />
                       </div>
 
                       {/* Nome */}
                       <div className="flex-1">
-                        <p className="text-[1rem]  font-medium text-[#404040]">{participant.name}</p>
+                        <p className="text-[1rem]  font-medium text-[#404040]">{participant?.user.name}</p>
+                        {activity?.private && (
+                          <span className="text-sm font-secundaria">
+                            {participant?.approved ? "Participante" : "Pendente"}
+                          </span>
+                        )}
                       </div>
 
                       {/* Ações */}
-                      <div className="flex items-center gap-2">
+                     {!participant.approvedAt && <div className="flex items-center gap-2">
                         <button
                           type="button"
                           className="cursor-pointer w-8 h-8 rounded-full bg-primaria hover:bg-primaria/90 text-white flex items-center justify-center"
                           title="Aprovar"
+                          onClick={() => handleApproveParticipant(activityId, participant?.user.id, true)}
                         >
                           <Check />
                         </button>
@@ -182,10 +192,12 @@ export const ActivityOwnerModal = ({ isOpen, onClose, activityId }: any) => {
                           type="button"
                           className="cursor-pointer w-8 h-8 rounded-full bg-perigo hover:bg-perigo/90 text-white flex items-center justify-center"
                           title="Recusar"
+                          onClick={() => handleApproveParticipant(activityId, participant?.user.id, false)}
                         >
                           <X />
                         </button>
-                      </div>
+                      </div>}
+
                     </div>
                   ))}
                 </div>

@@ -66,7 +66,8 @@ export const UserComponent = () => {
       <ActivitySection
         activites={userActivitiesParticipant || []}
         title="Historico De Atividades"
-        className="w-fit flex flex-col gap-4 mb-12"
+        cardMode="participant"
+        className="w-full flex flex-col gap-2 mb-12"
         message="Você ainda não participou de nehuma atividade."
         viewMore={userActivitiesParticipant && userActivitiesParticipant?.length > 0}
       />

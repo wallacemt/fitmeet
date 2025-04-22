@@ -33,7 +33,7 @@ const CancelParticipationButton = () => {
     <Button
       type="button"
       variant={'ghost'}
-      className="text-base border text-perigo font-extrabold border-perigo   w-full max-w-2xs p-6 h-12 mt-2 flex items-center justify-center rounded-md hover:scale-105 hover:bg-primaria transition duration-300 ease-in-out cursor-pointer relative lg:mx-0 mx-auto"
+      className="text-base border text-perigo font-extrabold border-perigo   w-full max-w-2xs p-6 h-12 mt-2 flex items-center justify-center rounded-md hover:scale-105 hover:text-perigo transition duration-300 ease-in-out cursor-pointer relative lg:mx-0 mx-auto"
       onClick={() => {}}
     >
       Desinscrever

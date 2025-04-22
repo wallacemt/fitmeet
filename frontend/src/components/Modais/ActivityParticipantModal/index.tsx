@@ -17,7 +17,6 @@ export const ActivityParticipantModal = ({ isOpen, onClose, activityId }: any) =
   useEffect(() => {
     const getAcParticipants = async () => {
       const response = await useAct.getActivityParticipants(activityId);
-      console.log(response)
       setParticipants(response);
     };
 

@@ -164,6 +164,20 @@ export const getActivityParticipant = async (activityId: string): Promise<Partic
   }
 };
 
+export const updateParticipantStatus = async (activityId: string, partId: string, approved: boolean): Promise<string> => {
+  try {
+    setAuthHeader(activitiesApi);
+    const response = await activitiesApi.put(`/${activityId}/approve`, {
+      participantId: partId,
+      approved: approved,
+    });
+    return response.data as string;
+  } catch (err: any) {
+    console.error(err.message);
+    throw err;
+  }
+};
+
 export const cancelActivity = async (actId: string): Promise<string> => {
   try {
     setAuthHeader(activitiesApi);
@@ -185,4 +199,4 @@ export const activitySubscribe = async (actId: string) => {
     console.error(err.message);
     throw err;
   }
-}
+};

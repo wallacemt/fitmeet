@@ -11,6 +11,7 @@ export const ActivitySection = ({
   viewMore,
   isOwner,
   message = "Nenhum dado!",
+  cardMode
 }: {
   activites: ActivityResponse[];
   title: string;
@@ -18,7 +19,9 @@ export const ActivitySection = ({
   viewMore?: boolean;
   isOwner?: boolean;
   message?: string;
+  cardMode?:string
 }) => {
+  
   return (
     <section className={className}>
       <h2 className={`font-principal ${activites.length <= 0 && 'text-center'} font-normal text-[1.75rem]`}>{title}</h2>
@@ -26,7 +29,7 @@ export const ActivitySection = ({
         <div className={`${activites.length > 0 ? "grid" : "flex"} grid-cols-1 sm:grid-cols-2 md:grid-cols-2 xl:grid-cols-4 w-full gap-2`}>
           {activites.length > 0
             ? activites.map((item) => (
-                <ActivityCard key={item.id} item={item} modalType={isOwner ? "user" : "visitant"} />
+                <ActivityCard key={item.id} item={item}  modalType={isOwner ? "user" : "visitant"} mode={cardMode} />
               ))
             : (
             <div className="">
