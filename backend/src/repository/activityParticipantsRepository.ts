@@ -22,6 +22,7 @@ export const activityParticipantsRepository = {
             title: true,
             description: true,
             private: true,
+            deletedAt:true,
             image: true,
             scheduledDate: true,
             type: {

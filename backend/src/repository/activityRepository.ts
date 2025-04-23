@@ -225,9 +225,7 @@ export const activityRepository = {
     return prisma.activityParticipant.count({ where: { activityId } });
   },
   deleteActivity: async (id: string) => {
-    await prisma.activityAddress.deleteMany({ where: { activityId: id } });
-    await prisma.activityParticipant.deleteMany({ where: { activityId: id } });
-    return prisma.activity.delete({ where: { id } });
+    return prisma.activity.update({ where: { id }, data: { deletedAt: new Date() } });
   },
 
   updateActivity: async (id: string, activityData: Partial<activityType>) => {

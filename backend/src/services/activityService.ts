@@ -48,6 +48,7 @@ export const activityService = {
             longitude: activity.address?.longitude,
           },
           scheduleDate: activity.scheduledDate,
+          deletedAt: activity.deletedAt,
           createdAt: activity.createdAt,
           completedAt: activity.completedAt,
           private: activity.private,
@@ -111,6 +112,7 @@ export const activityService = {
           scheduleDate: activity.scheduledDate,
           createdAt: activity.createdAt,
           completedAt: activity.completedAt,
+          deletedAt: activity.deletedAt,
           private: activity.private,
           creator: {
             id: activity.creator.id,
@@ -148,6 +150,7 @@ export const activityService = {
         },
         scheduleDate: activity.scheduledDate,
         createdAt: activity.createdAt,
+        deletedAt: activity.deletedAt,
         completedAt: activity.completedAt,
         private: activity.private,
         creator: {
@@ -200,6 +203,7 @@ export const activityService = {
         scheduleDate: activity.scheduledDate,
         createdAt: activity.createdAt,
         completedAt: activity.completedAt,
+        deletedAt: activity.deletedAt,  
         private: activity.private,
         creator: {
           id: activity.creator.id,
@@ -260,6 +264,7 @@ export const activityService = {
         },
         scheduleDate: activity.scheduledDate,
         createdAt: activity.createdAt,
+        deletedAt: activity.deletedAt,
         completedAt: activity.completedAt,
         private: activity.private,
         creator: {
@@ -298,6 +303,7 @@ export const activityService = {
       },
       scheduleDate: activity.scheduledDate,
       createdAt: activity.createdAt,
+      deletedAt: activity.deletedAt,
       completedAt: activity.completedAt,
       private: activity.private,
       creator: {
