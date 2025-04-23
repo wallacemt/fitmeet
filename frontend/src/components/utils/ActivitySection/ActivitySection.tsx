@@ -21,7 +21,6 @@ export const ActivitySection = ({
   message?: string;
   cardMode?:string
 }) => {
-  
   return (
     <section className={className}>
       <h2 className={`font-principal ${activites.length <= 0 && 'text-center'} font-normal text-[1.75rem]`}>{title}</h2>

@@ -5,17 +5,18 @@ import { Card, CardFooter, CardTitle } from "@/components/ui/card";
 import { Calendar, LockIcon, Users } from "lucide-react";
 import { useState } from "react";
 
-export const ActivityCard = ({ item, modalType = "visitant", mode = 'default' }: any) => {
+export const ActivityCard = ({ item, modalType = "visitant", mode = "default" }: any) => {
   const [modalOpen, setModalOpen] = useState(false);
-  if (mode !== 'default') {
+  if (mode !== "default") {
     item = {
       id: item.activityId,
       image: item.activity.image,
       title: item.activity.title,
       scheduleDate: item.activity.scheduleDate,
       private: item.activity.private,
-      participantCount: item.participantCount
-    }
+      deletedAt: item.activity.deletedAt,
+      participantCount: item.participantCount,
+    };
   }
   return (
     <>
@@ -40,14 +41,20 @@ export const ActivityCard = ({ item, modalType = "visitant", mode = 'default' }:
           <CardTitle className="text-base font-bold">{item.title}</CardTitle>
           <CardFooter className="p-0 mt-2 text-xs text-muted-foreground gap-2 flex flex-wrap absolute bottom-4  ">
             <span className="flex items-center">
-              <Calendar className="w-4 h-4 text-primaria" />
-              {new Intl.DateTimeFormat("pt-BR", {
+              {item.deletedAt ? (
+                <span className="font-secundaria font-bold text-perigo">Atividade Cancelada</span>
+              ) : (
+                <>
+                  <Calendar className="w-4 h-4 text-primaria" />
+                  {new Intl.DateTimeFormat("pt-BR", {
                     day: "2-digit",
                     month: "long",
                     year: "numeric",
                     hour: "2-digit",
                     minute: "2-digit",
                   }).format(new Date(item?.scheduleDate || new Date()))}
+                </>
+              )}
             </span>
             |
             <span className="flex items-center gap-1">

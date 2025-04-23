@@ -1,6 +1,6 @@
 import { Dialog, DialogContent, DialogFooter, DialogHeader } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { CalendarDays, Check, LockKeyhole, LockOpen, Pen, Trash2Icon, Users, X } from "lucide-react";
+import { CalendarDays, CalendarOff, Check, LockKeyhole, LockOpen, Pen, Trash2Icon, Users, X } from "lucide-react";
 import { useContext, useEffect, useState } from "react";
 import { ActivityCreateModal } from "../ActivityCreateModal";
 import { ViewLocationMap } from "@/components/utils/ViewLocationMap";
@@ -102,26 +102,51 @@ export const ActivityOwnerModal = ({ isOpen, onClose, activityId }: any) => {
                 </p>
               </div>
               <div className="flex flex-col gap-2">
-                <Button
-                  type="button"
-                  className="text-base font-bold bg-perigo hover:bg-perigo/80  w-full max-w-2xs p-6 h-12 mt-2 flex items-center justify-center rounded-md hover:scale-105 transition duration-300 ease-in-out cursor-pointer relative top-3 lg:top-auto lg:mx-0 mx-auto lg:absolute bottom-[6rem]"
-                  onClick={() => setViewConfirm(true)}
-                >
-                  <Trash2Icon />
-                  Cancelar Atividade
-                </Button>
-                <Button
-                  type="button"
-                  variant={"ghost"}
-                  className="text-base font-bold border border-[#171717] w-full max-w-2xs p-6 h-12 mt-2 flex items-center justify-center rounded-md hover:scale-105 transition duration-300 ease-in-out cursor-pointer relative top-3 lg:top-auto lg:mx-0 mx-auto lg:absolute bottom-6"
-                  onClick={() => {
-                    setModalType("edit");
-                    setIsModalEdit(true);
-                  }}
-                >
-                  <Pen />
-                  Editar
-                </Button>
+                {activity?.deletedAt ? (
+                  <>
+                    <Button
+                      type="button"
+                      className="text-base font-bold bg-perigo hover:bg-perigo/80  w-full max-w-2xs p-6 h-12 mt-2 flex items-center justify-center rounded-md hover:scale-105 transition duration-300 ease-in-out cursor-pointer relative top-3 lg:top-auto lg:mx-0 mx-auto lg:absolute bottom-[6rem]"
+                    >
+                      <CalendarOff />
+                      Atividade Cancelada
+                    </Button>
+                    <p className="flex text-sm items-center gap-2">
+                      <CalendarOff className="text-perigo" />
+                      Cancelada em {}
+                      {new Intl.DateTimeFormat("pt-BR", {
+                        day: "2-digit",
+                        month: "long",
+                        year: "numeric",
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      }).format(new Date(activity?.scheduleDate || new Date()))}
+                    </p>
+                  </>
+                ) : (
+                  <>
+                    <Button
+                      type="button"
+                      className="text-base font-bold bg-perigo hover:bg-perigo/80  w-full max-w-2xs p-6 h-12 mt-2 flex items-center justify-center rounded-md hover:scale-105 transition duration-300 ease-in-out cursor-pointer relative top-3 lg:top-auto lg:mx-0 mx-auto lg:absolute bottom-[6rem]"
+                      onClick={() => setViewConfirm(true)}
+                    >
+                      <Trash2Icon />
+                      Cancelar Atividade
+                    </Button>
+                    <Button
+                      type="button"
+                      variant={"ghost"}
+                      className="text-base font-bold border border-[#171717] w-full max-w-2xs p-6 h-12 mt-2 flex items-center justify-center rounded-md hover:scale-105 transition duration-300 ease-in-out cursor-pointer relative top-3 lg:top-auto lg:mx-0 mx-auto lg:absolute bottom-6"
+                      onClick={() => {
+                        setModalType("edit");
+                        setIsModalEdit(true);
+                      }}
+                    >
+                      <Pen />
+                      Editar
+                    </Button>
+                  </>
+                )}
               </div>
             </div>
 
@@ -179,25 +204,26 @@ export const ActivityOwnerModal = ({ isOpen, onClose, activityId }: any) => {
                       </div>
 
                       {/* Ações */}
-                     {!participant.approvedAt && <div className="flex items-center gap-2">
-                        <button
-                          type="button"
-                          className="cursor-pointer w-8 h-8 rounded-full bg-primaria hover:bg-primaria/90 text-white flex items-center justify-center"
-                          title="Aprovar"
-                          onClick={() => handleApproveParticipant(activityId, participant?.user.id, true)}
-                        >
-                          <Check />
-                        </button>
-                        <button
-                          type="button"
-                          className="cursor-pointer w-8 h-8 rounded-full bg-perigo hover:bg-perigo/90 text-white flex items-center justify-center"
-                          title="Recusar"
-                          onClick={() => handleApproveParticipant(activityId, participant?.user.id, false)}
-                        >
-                          <X />
-                        </button>
-                      </div>}
-
+                      {!participant.approvedAt && (
+                        <div className="flex items-center gap-2">
+                          <button
+                            type="button"
+                            className="cursor-pointer w-8 h-8 rounded-full bg-primaria hover:bg-primaria/90 text-white flex items-center justify-center"
+                            title="Aprovar"
+                            onClick={() => handleApproveParticipant(activityId, participant?.user.id, true)}
+                          >
+                            <Check />
+                          </button>
+                          <button
+                            type="button"
+                            className="cursor-pointer w-8 h-8 rounded-full bg-perigo hover:bg-perigo/90 text-white flex items-center justify-center"
+                            title="Recusar"
+                            onClick={() => handleApproveParticipant(activityId, participant?.user.id, false)}
+                          >
+                            <X />
+                          </button>
+                        </div>
+                      )}
                     </div>
                   ))}
                 </div>

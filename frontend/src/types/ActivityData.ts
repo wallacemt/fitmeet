@@ -44,6 +44,7 @@ export interface ActivityResponse {
   address: ActivityAddress;
   scheduleDate: string;
   createdAt: string;
+  deletedAt: string;
   completedAt: string;
   private: boolean;
   creator: ActivityCreator;
