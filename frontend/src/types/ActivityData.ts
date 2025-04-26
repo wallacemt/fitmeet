@@ -42,7 +42,7 @@ export interface ActivityResponse {
   confirmationCode: string;
   participantCount: number;
   address: ActivityAddress;
-  scheduleDate: string;
+  scheduleDate: Date;
   createdAt: string;
   deletedAt: string;
   completedAt: string;

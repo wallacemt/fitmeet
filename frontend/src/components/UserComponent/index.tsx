@@ -8,8 +8,9 @@ import { Pencil } from "lucide-react";
 import { Link } from "react-router";
 import { useActivities } from "@/hooks/useActivities";
 import { ActivityResponse } from "@/types/ActivityData";
+import { Button } from "../ui/button";
 export const UserComponent = () => {
-  const { user, update } = useContext(UserContext);
+  const { user, update, logout } = useContext(UserContext);
   const useAct = useActivities();
   const [userActivities, setUserActivities] = useState<ActivityResponse[]>();
   const [userActivitiesParticipant, setUserActivitiesParticipant] = useState<ActivityResponse[]>();
@@ -37,6 +38,14 @@ export const UserComponent = () => {
             <p>Editar Perfil</p>
           </div>
         </Link>
+        <Button
+          type="button"
+          variant={"ghost"}
+          onClick={() => logout()}
+          className="absolute top-12 right-4 disabled:cursor-not-allowed text-base border border-perigo w-fit lg:w-30 p-4 mt-4 hover:bg-perigo/80 hover:text-white cursor-pointer flex items-center justify-center rounded-md mx-auto"
+        >
+          Sair
+        </Button>
 
         <section className="w-full flex flex-col gap-4 items-center justify-center rounded-md">
           <Avatar>

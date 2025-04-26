@@ -74,7 +74,7 @@ export const LoginComponent = () => {
               <p className="text-perigo text-center text-sm">{form.error}</p>
             )}
 
-            <Button type="submit" className="bg-primaria w-full h-12 mt-4 hover:bg-primaria/80" disabled={form.loading || !form.formState.isValid}>
+            <Button type="submit" className="bg-primaria w-full h-12 mt-4 hover:bg-primaria/80 cursor-pointer" disabled={form.loading || !form.formState.isValid}>
               {form.loading ? (
                 <div className="animate-spin h-5 w-5 border-b-2 border-[#F9370B] rounded-full"></div>
               ) : (

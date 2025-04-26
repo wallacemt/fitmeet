@@ -35,7 +35,6 @@ export const updateUserPreferences = async (preferences: string[]): Promise<stri
   try {
     setAuthHeader(userApi);
     const response = await userApi.post("/preferences/define", { typeIds: preferences });
-    console.log(response.data);
     return response.data as string;
   } catch (err: any) {
     console.error(err.message);

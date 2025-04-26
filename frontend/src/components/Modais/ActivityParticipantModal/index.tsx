@@ -1,6 +1,5 @@
 import { Dialog, DialogContent } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { CalendarDays, LockKeyhole, LockOpen, Users } from "lucide-react";
+import { BadgeCheck, CalendarDays, LockKeyhole, LockOpen, Users } from "lucide-react";
 import { useContext, useEffect, useState } from "react";
 import { ViewLocationMap } from "@/components/utils/ViewLocationMap";
 import { useActivities } from "@/hooks/useActivities";
@@ -11,7 +10,7 @@ import { ActivityButtonFactory } from "@/components/ActivityButtons";
 export const ActivityParticipantModal = ({ isOpen, onClose, activityId }: any) => {
   const [participants, setParticipants] = useState<Participant[] | undefined>();
   const [activity, setActivity] = useState<ActivityResponse | undefined>();
-  const {handleUpdate, update, user} = useContext(UserContext)
+  const { handleUpdate, update, user } = useContext(UserContext);
   const useAct = useActivities();
 
   useEffect(() => {
@@ -34,6 +33,19 @@ export const ActivityParticipantModal = ({ isOpen, onClose, activityId }: any) =
       handleUpdate();
     });
   };
+
+  const handleUnsubscribeActivity = () => {
+    useAct.unsubscribeActivity(activityId).then(() => {
+      handleUpdate();
+    });
+  };
+
+  const handleChekInActivity = (code: string) => {
+    useAct.checkInActivity(code, activityId).then(() => {
+      handleUpdate();
+    });
+  };
+
   return (
     <>
       <Dialog open={isOpen} onOpenChange={onClose}>
@@ -71,7 +83,7 @@ export const ActivityParticipantModal = ({ isOpen, onClose, activityId }: any) =
                   }).format(new Date(activity?.scheduleDate || new Date()))}
                 </p>
                 <p className="flex items-center gap-2">
-                  <Users size={22} className="text-primaria" /> {participants?.length} Participantes
+                  <Users size={22} className="text-primaria" /> {activity?.participantCount} Participantes
                 </p>
                 <p className="flex items-center gap-2">
                   {activity?.private ? (
@@ -85,7 +97,16 @@ export const ActivityParticipantModal = ({ isOpen, onClose, activityId }: any) =
                   )}
                 </p>
               </div>
-              <ActivityButtonFactory activity={activity!} participants={participants || []} user={user} onClik={hadnleSubscribeActivity}/>
+              <ActivityButtonFactory
+                activity={activity!}
+                participants={participants || []}
+                user={user}
+                onClik={{
+                  subscribeActivity: hadnleSubscribeActivity,
+                  unsubscribeActivity: handleUnsubscribeActivity,
+                  checkInActivity: handleChekInActivity,
+                }}
+              />
             </div>
 
             {/* COLUNA DIREITA */}
@@ -113,31 +134,42 @@ export const ActivityParticipantModal = ({ isOpen, onClose, activityId }: any) =
                       />
                     </div>
                     <div className="flex-1 flex flex-col">
-                      <p className="text-[1rem]  font-medium text-[#404040]">{activity?.creator?.name}</p>
+                      <p className="text-[1rem]  font-medium text-[#404040] flex gap-2">
+                        {activity?.creator?.name}
+                        {new Date(activity?.scheduleDate!).getTime() < new Date().getTime() && <BadgeCheck className="text-primaria"/>}
+                      </p>
                       <span className="text-sm font-secundaria">Organizador</span>
                     </div>
                   </div>
-                  {participants?.map((participant, index) => (
-                    <div
-                      key={index}
-                      className="flex-shrink-0 flex items-center gap-2 bg-gray-50 rounded-lg p-3 min-w-[260px]"
-                    >
-                      {/* Imagem */}
-                      <div className="w-14 h-14 border-2 border-primaria rounded-full">
-                        <img
-                          src={participant?.user.avatar}
-                          alt={participant?.user.name}
-                          className="h-full w-full font-secundaria rounded-full object-cover border"
-                        />
-                      </div>
+                  {participants
+                    ?.filter((participant) => participant.approved)
+                    .sort((a, b) => (a.user.name > b.user.name ? 1 : -1))
+                    .map((participant, index) => (
+                      <div
+                        key={index}
+                        className="flex-shrink-0 flex items-center gap-2 bg-gray-50 rounded-lg p-3 min-w-[260px]"
+                      >
+                        {/* Imagem */}
+                        <div className="w-14 h-14 border-2 border-primaria rounded-full">
+                          <img
+                            src={participant?.user.avatar}
+                            alt={participant?.user.name}
+                            className="h-full w-full font-secundaria rounded-full object-cover border"
+                          />
+                        </div>
 
-                      {/* Nome */}
-                      <div className="flex-1">
-                        <p className="text-[1rem]  font-medium text-[#404040]">{user?.id === participant?.user.id ? "Eu" : participant?.user.name}</p>
-                          {activity?.private && <span className="text-sm font-secundaria">{participant?.approved ? "Participante" : "Pendente"}</span>}
+                        {/* Nome */}
+                        <div className="flex-1">
+                          <p className="text-[1rem]  font-medium text-[#404040] flex gap-2">
+                            {user?.id === participant?.user.id ? "Eu" : participant?.user.name}
+                            {participant.confirmedAt && <BadgeCheck className="text-primaria" />}
+                          </p>
+                          <span className="text-sm font-secundaria">
+                            {participant?.approved ? "Participante" : "Pendente"}
+                          </span>
+                        </div>
                       </div>
-                    </div>
-                  ))}
+                    ))}
                 </div>
               </div>
             </div>

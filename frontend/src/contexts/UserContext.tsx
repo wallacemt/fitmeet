@@ -66,6 +66,8 @@ export const UserProvider = ({ children }: any) => {
     }, 1000);
   };
 
+
+
   const handleUpdate = (() => setUpdate(!update));
   return (
     <UserContext.Provider value={{ user, login, logout, loading, viewPreferenceModal, setViewPreferenceModal, update, handleUpdate }}>

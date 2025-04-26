@@ -1,6 +1,19 @@
 import { Dialog, DialogContent, DialogFooter, DialogHeader } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { CalendarDays, CalendarOff, Check, LockKeyhole, LockOpen, Pen, Trash2Icon, Users, X } from "lucide-react";
+import {
+  BadgeCheck,
+  CalendarDays,
+  CalendarOff,
+  Check,
+  LandPlot,
+  LockKeyhole,
+  LockOpen,
+  Pen,
+  Trash2Icon,
+  UserCheck,
+  Users,
+  X,
+} from "lucide-react";
 import { useContext, useEffect, useState } from "react";
 import { ActivityCreateModal } from "../ActivityCreateModal";
 import { ViewLocationMap } from "@/components/utils/ViewLocationMap";
@@ -17,6 +30,8 @@ export const ActivityOwnerModal = ({ isOpen, onClose, activityId }: any) => {
   const { user, handleUpdate, update } = useContext(UserContext);
   const useAct = useActivities();
   const [activity, setActivity] = useState<ActivityResponse | undefined>();
+  const activityTime = new Date(activity?.scheduleDate!).getTime();
+
   useEffect(() => {
     const getAcParticipants = async () => {
       const response = await useAct.getActivityParticipants(activityId);
@@ -87,7 +102,7 @@ export const ActivityOwnerModal = ({ isOpen, onClose, activityId }: any) => {
                   }).format(new Date(activity?.scheduleDate || new Date()))}
                 </p>
                 <p className="flex items-center gap-2">
-                  <Users size={22} className="text-primaria" /> {participants?.length} Participantes
+                  <Users size={22} className="text-primaria" /> {activity?.participantCount} Participantes
                 </p>
                 <p className="flex items-center gap-2">
                   {activity?.private === true ? (
@@ -106,7 +121,7 @@ export const ActivityOwnerModal = ({ isOpen, onClose, activityId }: any) => {
                   <>
                     <Button
                       type="button"
-                      className="text-base font-bold bg-perigo hover:bg-perigo/80  w-full max-w-2xs p-6 h-12 mt-2 flex items-center justify-center rounded-md hover:scale-105 transition duration-300 ease-in-out cursor-pointer relative top-3 lg:top-auto lg:mx-0 mx-auto lg:absolute bottom-[6rem]"
+                      className="text-base font-bold bg-perigo hover:bg-perigo/80  w-full max-w-2xs p-6 h-12 mt-2 flex items-center justify-center rounded-md hover:scale-105 transition duration-300 ease-in-out cursor-not-allowed relative top-3 lg:top-auto lg:mx-0 mx-auto lg:absolute bottom-[6rem]"
                     >
                       <CalendarOff />
                       Atividade Cancelada
@@ -122,6 +137,17 @@ export const ActivityOwnerModal = ({ isOpen, onClose, activityId }: any) => {
                         minute: "2-digit",
                       }).format(new Date(activity?.scheduleDate || new Date()))}
                     </p>
+                  </>
+                ) : activityTime < new Date().getTime() ? (
+                  <>
+                    <Button
+                      type="button"
+                      className="text-base font-bold  bg-primaria  w-full max-w-2xs p-6 h-12 mt-2 flex items-center justify-center rounded-md hover:scale-105 hover:bg-primaria transition duration-300 ease-in-out cursor-pointer relative lg:mx-0 mx-auto"
+                      onClick={() => console.log("encerrado")}
+                    >
+                      <LandPlot />
+                      Encerrar atividade
+                    </Button>
                   </>
                 ) : (
                   <>
@@ -161,8 +187,6 @@ export const ActivityOwnerModal = ({ isOpen, onClose, activityId }: any) => {
                   )}
                 </div>
               </div>
-
-              {/* PARTICIPANTES */}
               <div>
                 <h2 className="text-[1.75rem] font-normal font-principal">Participantes</h2>
                 <div className="flex flex-col overflow-y-auto gap-4 p-2 rounded-md max-h-[22.2rem]">
@@ -175,57 +199,83 @@ export const ActivityOwnerModal = ({ isOpen, onClose, activityId }: any) => {
                       />
                     </div>
                     <div className="flex-1 flex flex-col">
-                      <p className="text-[1rem]  font-medium text-[#404040]">{user?.name}</p>
+                      <p className="text-[1rem]  font-medium text-[#404040] flex gap-2">
+                        {activity?.creator?.name}
+                        {new Date(activity?.scheduleDate!).getTime() < new Date().getTime() && (
+                          <BadgeCheck className="text-primaria" />
+                        )}
+                      </p>
                       <span className="text-sm font-secundaria">Organizador</span>
                     </div>
                   </div>
-                  {participants?.map((participant, index) => (
-                    <div
-                      key={index}
-                      className="flex-shrink-0 flex items-center gap-2 bg-gray-50 rounded-lg p-3 min-w-[260px]"
-                    >
-                      {/* Imagem */}
-                      <div className="w-14 h-14 border-2 border-primaria rounded-full">
-                        <img
-                          src={participant?.user.avatar}
-                          alt={participant?.user.name}
-                          className="h-full w-full font-secundaria rounded-full object-cover border"
-                        />
-                      </div>
+                  {participants?.map((participant, index) => {
+                    return (
+                      <div
+                        key={index}
+                        className={`${
+                          !participant.approved && participant.approvedAt !== null && "hidden"
+                        } flex-shrink-0 flex items-center gap-2 bg-gray-50 rounded-lg p-3 min-w-[260px]`}
+                      >
+                        <div className="w-14 h-14 border-2 border-primaria rounded-full">
+                          <img
+                            src={participant?.user.avatar}
+                            alt={participant?.user.name}
+                            className="h-full w-full font-secundaria rounded-full object-cover border"
+                          />
+                        </div>
 
-                      {/* Nome */}
-                      <div className="flex-1">
-                        <p className="text-[1rem]  font-medium text-[#404040]">{participant?.user.name}</p>
-                        {activity?.private && (
-                          <span className="text-sm font-secundaria">
-                            {participant?.approved ? "Participante" : "Pendente"}
-                          </span>
+                        <div className="flex-1">
+                          <p className="text-[1rem]  flex gap-2 font-medium text-[#404040]">
+                            {participant?.user.name}
+                            {participant.confirmedAt && <BadgeCheck className="text-primaria" />}
+                          </p>
+                          {activity?.private && (
+                            <span className="text-sm font-secundaria">
+                              {participant?.approved
+                                ? "Participante"
+                                : participant.subscriptionStatus == "pending"
+                                ? "Pendente"
+                                : participant.subscriptionStatus === null
+                                ? "Pendente"
+                                : "Recusado"}
+                            </span>
+                          )}
+                        </div>
+
+                        {!participant.approvedAt && (
+                          <div className="flex items-center gap-2">
+                            <button
+                              type="button"
+                              className="cursor-pointer w-8 h-8 rounded-full bg-primaria hover:bg-primaria/90 text-white flex items-center justify-center"
+                              title="Aprovar"
+                              onClick={() => handleApproveParticipant(activityId, participant?.user.id, true)}
+                            >
+                              <Check />
+                            </button>
+                            <button
+                              type="button"
+                              className="cursor-pointer w-8 h-8 rounded-full bg-perigo hover:bg-perigo/90 text-white flex items-center justify-center"
+                              title="Recusar"
+                              onClick={() => handleApproveParticipant(activityId, participant?.user.id, false)}
+                            >
+                              <X />
+                            </button>
+                          </div>
                         )}
                       </div>
-
-                      {/* Ações */}
-                      {!participant.approvedAt && (
-                        <div className="flex items-center gap-2">
-                          <button
-                            type="button"
-                            className="cursor-pointer w-8 h-8 rounded-full bg-primaria hover:bg-primaria/90 text-white flex items-center justify-center"
-                            title="Aprovar"
-                            onClick={() => handleApproveParticipant(activityId, participant?.user.id, true)}
-                          >
-                            <Check />
-                          </button>
-                          <button
-                            type="button"
-                            className="cursor-pointer w-8 h-8 rounded-full bg-perigo hover:bg-perigo/90 text-white flex items-center justify-center"
-                            title="Recusar"
-                            onClick={() => handleApproveParticipant(activityId, participant?.user.id, false)}
-                          >
-                            <X />
-                          </button>
-                        </div>
-                      )}
+                    );
+                  })}
+                  {activityTime < new Date().getTime() && (
+                    <div className=" flex flex-col items-center gap-2">
+                      <div className="flex items-center gap-2">
+                        <UserCheck className="text-primaria" />
+                        <p className="font-secundaria font-semibold">Código de check-in</p>
+                      </div>
+                      <p className="font-principal text-[#171717] text-4xl border-4 w-fit border-dotted  p-2 border-[#171717]">
+                        {activity?.confirmationCode}
+                      </p>
                     </div>
-                  ))}
+                  )}
                 </div>
               </div>
             </div>

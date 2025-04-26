@@ -1,5 +1,7 @@
 import {
+  activityChekIn,
   activitySubscribe,
+  activityUnsubscribe,
   cancelActivity,
   getActivitiesPag,
   getActivitiesType,
@@ -118,6 +120,25 @@ export const useActivities = () => {
     }
   };
 
+  const unsubscribeActivity = async (actId: string) => {
+    try {
+      const response = await activityUnsubscribe(actId);
+      return response;
+    } catch (err: any) {
+      console.error(err.message);
+      throw err;
+    }
+  };
+
+  const checkInActivity = async (code: string, activityId: string) => {
+    try {
+      const response = await activityChekIn(code, activityId);
+      return response;
+    } catch (err: any) {
+      console.error(err.message);
+      throw err;
+    }
+  };
   const getActivityParticipants = async (activityId: string): Promise<Participant[] | undefined> => {
     try {
       const response = await getActivityParticipant(activityId);
@@ -149,6 +170,8 @@ export const useActivities = () => {
     cancelAct,
     getActById,
     subscribeActivity,
-    updateStatusParticipant
+    unsubscribeActivity,
+    updateStatusParticipant,
+    checkInActivity
   };
 };
