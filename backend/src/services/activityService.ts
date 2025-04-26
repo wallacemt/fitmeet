@@ -20,11 +20,10 @@ export const activityService = {
     order?: "asc" | "desc"
   ) => {
     const activitiesRes = await activityRepository.getActivities(page, pageSize, userId, type, orderBy, order);
-    const total = await activityRepository.countActivities(userId, type );
+    const total = await activityRepository.countActivities(userId, type);
     const totalPages = Math.ceil(total / pageSize);
     const previous = page > 1 ? page - 1 : null;
     const next = page < Math.ceil(total / pageSize) ? page + 1 : null;
-    
 
     const activities = await Promise.all(
       activitiesRes.map(async (activity: any) => {
@@ -92,11 +91,13 @@ export const activityService = {
       activitiesRes.map(async (activity: any) => {
         const status = await activityParticipantsRepository.getUserSubscriptionStatus(userId!, activity.id);
         const userStatus: UserSubscriptionStatus =
-          status?.approvedAt === null
+          status?.approvedAt === null && status?.approved === false
             ? UserSubscriptionStatus.PENDING
-            : status?.approved === false
+            : status?.approvedAt !== null && status?.approved === false
             ? UserSubscriptionStatus.REJECTED
-            : UserSubscriptionStatus.ACCEPTED;
+            : status?.approvedAt !== null && status?.approved === true
+            ? UserSubscriptionStatus.ACCEPTED
+            : UserSubscriptionStatus.PENDING;
         return {
           id: activity.id,
           title: activity.title,
@@ -203,7 +204,7 @@ export const activityService = {
         scheduleDate: activity.scheduledDate,
         createdAt: activity.createdAt,
         completedAt: activity.completedAt,
-        deletedAt: activity.deletedAt,  
+        deletedAt: activity.deletedAt,
         private: activity.private,
         creator: {
           id: activity.creator.id,
@@ -222,7 +223,13 @@ export const activityService = {
     page: number = 0,
     pageSize: number = 10
   ) => {
-    const activitiesPages = await activityParticipantsRepository.getUserParticipant(userId, orderBy, order, page, pageSize);
+    const activitiesPages = await activityParticipantsRepository.getUserParticipant(
+      userId,
+      orderBy,
+      order,
+      page,
+      pageSize
+    );
     const activities = await Promise.all(
       activitiesPages.map(async (act) => ({
         ...act,
@@ -280,14 +287,15 @@ export const activityService = {
   getActivitiesById: async (id: string, userId: string) => {
     const activity = await activityRepository.getActivityById(id);
     if (!activity) throw { error: "Atividade nao encontrada.", status: 404 };
-
     const status = await activityParticipantsRepository.getUserSubscriptionStatus(userId!, activity.id);
     const userStatus: UserSubscriptionStatus =
-      status?.approvedAt === null
+      status?.approvedAt === null && status?.approved === false
         ? UserSubscriptionStatus.PENDING
-        : status?.approved === false
+        : status?.approvedAt !== null && status?.approved === false
         ? UserSubscriptionStatus.REJECTED
-        : UserSubscriptionStatus.ACCEPTED;
+        : status?.approvedAt !== null && status?.approved === true
+        ? UserSubscriptionStatus.ACCEPTED
+        : UserSubscriptionStatus.PENDING;
 
     return {
       id: activity.id,
@@ -334,14 +342,29 @@ export const activityService = {
     return activityParticipant;
   },
 
-  getParticipantsByActivityId: async (activityId: string) => {
+  getParticipantsByActivityId: async (activityId: string, userId: string) => {
     const activityParticipant = await activityParticipantsRepository.getParticipantsByActivityId(activityId);
 
     if (!activityParticipant) throw { error: "Atividade não encontrada.", status: 404 };
-    return activityParticipant.map((participant) => ({
-      ...participant,
-      subscriptionStatus: participant.approved ? UserSubscriptionStatus.ACCEPTED : UserSubscriptionStatus.PENDING,
-    }));
+
+    const activityParts = await Promise.all(
+      activityParticipant.map(async (participant) => {
+        const status = await activityParticipantsRepository.getUserSubscriptionStatus(userId, activityId);
+        const userStatus: UserSubscriptionStatus =
+          status?.approvedAt === null && status?.approved === false
+            ? UserSubscriptionStatus.PENDING
+            : status?.approvedAt !== null && status?.approved === false
+            ? UserSubscriptionStatus.REJECTED
+            : status?.approvedAt !== null && status?.approved === true
+            ? UserSubscriptionStatus.ACCEPTED
+            : UserSubscriptionStatus.PENDING;
+        return {
+          ...participant,
+          subscriptionStatus: status ? userStatus : null,
+        };
+      })
+    );
+    return activityParts;
   },
 
   createActivity: async (activityData: activityType) => {

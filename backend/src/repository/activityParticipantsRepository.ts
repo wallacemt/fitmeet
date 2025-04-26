@@ -48,7 +48,11 @@ export const activityParticipantsRepository = {
 
   countUserParticipies: async (userId: string) => {
     return prisma.activityParticipant.count({
-      where: { userId },
+      where: {
+        userId,
+        approved: true,
+        approvedAt: { not: null },
+      },
     });
   },
 

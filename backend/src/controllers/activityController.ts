@@ -148,7 +148,7 @@ const activityController = (server: Express) => {
   router.get("/:id/participants", async (req, res) => {
     try {
       const id = req.params.id;
-      const participants = await activityService.getParticipantsByActivityId(id);
+      const participants = await activityService.getParticipantsByActivityId(id, req.userId);
       res.status(200).json(participants);
     } catch (error) {
       const status = (error as any).status || 500;

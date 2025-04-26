@@ -10,7 +10,7 @@ export const activityRepository = {
     userId: string,
     type?: string,
     orderBy?: string,
-    order?: "asc" | "desc",
+    order?: "asc" | "desc"
   ) => {
     const skip = page * pageSize;
     const userPreferences = await preferenceRepository.getUserPreferences(userId);
@@ -18,8 +18,9 @@ export const activityRepository = {
       where: {
         creatorId: { not: userId },
         ...(type ? { type: { name: type } } : {}),
+        deletedAt: null,
       },
-      orderBy: orderBy ? { [orderBy]: order || "asc" } : { createdAt: "desc" } ,
+      orderBy: orderBy ? { [orderBy]: order || "asc" } : { createdAt: "desc" },
       skip,
       take: pageSize,
       include: {
@@ -36,12 +37,7 @@ export const activityRepository = {
     });
   },
 
-  getAllActivities: async (
-    filterBy: string,
-    filter: string,
-    orderByField: string,
-    direction: string
-  ) => {
+  getAllActivities: async (filterBy: string, filter: string, orderByField: string, direction: string) => {
     const where = filterBy
       ? {
           [filterBy]: { contains: filter, mode: "insensitive" },
@@ -71,10 +67,8 @@ export const activityRepository = {
   getActivityByType: async (type: string) => {
     return await prisma.activity.findMany({
       where: {
-        OR: [
-          { typeId: type },
-          { type: { name: { contains: type, mode: "insensitive" } } },
-        ],
+        OR: [{ typeId: type }, { type: { name: { contains: type, mode: "insensitive" } } }],
+        deletedAt: null,
       },
       include: {
         type: true,
@@ -90,8 +84,6 @@ export const activityRepository = {
     });
   },
 
-  
-
   getPaginated: async (take: number, skip: number) => {
     return await prisma.activity.findMany({
       take,
@@ -99,12 +91,12 @@ export const activityRepository = {
     });
   },
 
-  countActivities: async (userId: string, type?: string ) => {
-    return prisma.activity.count({ 
+  countActivities: async (userId: string, type?: string) => {
+    return prisma.activity.count({
       where: {
         creatorId: { not: userId },
-        ...(type ? { type: { name: type } } : {})
-      }
+        ...(type ? { type: { name: type } } : {}),
+      },
     });
   },
 
@@ -222,7 +214,7 @@ export const activityRepository = {
   },
 
   getParticipantCountByActivityId: async (activityId: string) => {
-    return prisma.activityParticipant.count({ where: { activityId } });
+    return prisma.activityParticipant.count({ where: { activityId, approved: true, approvedAt: { not: null } } });
   },
   deleteActivity: async (id: string) => {
     return prisma.activity.update({ where: { id }, data: { deletedAt: new Date() } });
