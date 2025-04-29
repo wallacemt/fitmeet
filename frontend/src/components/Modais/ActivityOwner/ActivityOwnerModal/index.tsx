@@ -5,6 +5,7 @@ import {
   CalendarDays,
   CalendarOff,
   Check,
+  CheckCircle,
   LandPlot,
   LockKeyhole,
   LockOpen,
@@ -25,7 +26,8 @@ import { DialogDescription, DialogTitle } from "@radix-ui/react-dialog";
 export const ActivityOwnerModal = ({ isOpen, onClose, activityId }: any) => {
   const [isModalEdit, setIsModalEdit] = useState(false);
   const [modalType, setModalType] = useState<"create" | "edit">("create");
-  const [viewConfirm, setViewConfirm] = useState(false);
+  const [viewConfirmDelete, setViewConfirmDelete] = useState(false);
+  const [viewConfirmConclude, setViewConfirmConclude] = useState(false);
   const [participants, setParticipants] = useState<Participant[] | undefined>();
   const { user, handleUpdate, update } = useContext(UserContext);
   const useAct = useActivities();
@@ -49,7 +51,7 @@ export const ActivityOwnerModal = ({ isOpen, onClose, activityId }: any) => {
   const handleCancelActivity = () => {
     useAct.cancelAct(activityId).then(() => {
       onClose();
-      setViewConfirm(false);
+      setViewConfirmDelete(false);
       handleUpdate();
     });
   };
@@ -58,6 +60,12 @@ export const ActivityOwnerModal = ({ isOpen, onClose, activityId }: any) => {
     useAct.updateStatusParticipant(actId, partId, approved).then(() => handleUpdate());
   };
 
+  const handleConcludeActivity = () => {
+    setViewConfirmConclude(false);
+    useAct.concludeActivity(activityId).then(() => {
+      handleUpdate();
+    });
+  };
   return (
     <>
       {isModalEdit && (
@@ -115,6 +123,19 @@ export const ActivityOwnerModal = ({ isOpen, onClose, activityId }: any) => {
                     </>
                   )}
                 </p>
+                {activity?.completedAt && (
+                  <p className="flex text-sm items-center gap-2">
+                    <CheckCircle className="text-primaria" />
+                    Concluida em {}
+                    {new Intl.DateTimeFormat("pt-BR", {
+                      day: "2-digit",
+                      month: "long",
+                      year: "numeric",
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    }).format(new Date(activity?.scheduleDate || new Date()))}
+                  </p>
+                )}
               </div>
               <div className="flex flex-col gap-2">
                 {activity?.deletedAt ? (
@@ -138,23 +159,23 @@ export const ActivityOwnerModal = ({ isOpen, onClose, activityId }: any) => {
                       }).format(new Date(activity?.scheduleDate || new Date()))}
                     </p>
                   </>
-                ) : activityTime < new Date().getTime() ? (
+                ) : activityTime < new Date().getTime() && !activity?.completedAt ? (
                   <>
                     <Button
                       type="button"
                       className="text-base font-bold  bg-primaria  w-full max-w-2xs p-6 h-12 mt-2 flex items-center justify-center rounded-md hover:scale-105 hover:bg-primaria transition duration-300 ease-in-out cursor-pointer relative lg:mx-0 mx-auto"
-                      onClick={() => console.log("encerrado")}
+                      onClick={() => setViewConfirmConclude(!viewConfirmConclude)}
                     >
                       <LandPlot />
                       Encerrar atividade
                     </Button>
                   </>
-                ) : (
+                ) : !activity?.deletedAt && !activity?.completedAt ? (
                   <>
                     <Button
                       type="button"
                       className="text-base font-bold bg-perigo hover:bg-perigo/80  w-full max-w-2xs p-6 h-12 mt-2 flex items-center justify-center rounded-md hover:scale-105 transition duration-300 ease-in-out cursor-pointer relative top-3 lg:top-auto lg:mx-0 mx-auto lg:absolute bottom-[6rem]"
-                      onClick={() => setViewConfirm(true)}
+                      onClick={() => setViewConfirmDelete(true)}
                     >
                       <Trash2Icon />
                       Cancelar Atividade
@@ -172,6 +193,14 @@ export const ActivityOwnerModal = ({ isOpen, onClose, activityId }: any) => {
                       Editar
                     </Button>
                   </>
+                ) : (
+                  <Button
+                    type="button"
+                    variant={"ghost"}
+                    className="text-base border font-extrabold border-[#404040]  w-full max-w-2xs p-6 h-12 mt-2 flex items-center justify-center rounded-md hover:scale-105  transition duration-300 ease-in-out cursor-not-allowed relative lg:mx-0 mx-auto"
+                  >
+                    Atividade encerrada
+                  </Button>
                 )}
               </div>
             </div>
@@ -187,9 +216,9 @@ export const ActivityOwnerModal = ({ isOpen, onClose, activityId }: any) => {
                   )}
                 </div>
               </div>
-              <div>
+              <div className="">
                 <h2 className="text-[1.75rem] font-normal font-principal">Participantes</h2>
-                <div className="flex flex-col overflow-y-auto gap-4 p-2 rounded-md max-h-[22.2rem]">
+                <div className="flex flex-col overflow-y-auto gap-2 p-2 rounded-md max-h-[18.2rem] ">
                   <div className="flex-shrink-0 flex items-center gap-2 bg-gray-50 rounded-lg p-3 min-w-[260px]">
                     <div className="w-14 h-14 border-2 border-primaria rounded-full">
                       <img
@@ -214,7 +243,7 @@ export const ActivityOwnerModal = ({ isOpen, onClose, activityId }: any) => {
                         key={index}
                         className={`${
                           !participant.approved && participant.approvedAt !== null && "hidden"
-                        } flex-shrink-0 flex items-center gap-2 bg-gray-50 rounded-lg p-3 min-w-[260px]`}
+                        } flex-shrink-0 flex items-center gap-2 bg-gray-50 rounded-lg p-3 min-w-[260px] `}
                       >
                         <div className="w-14 h-14 border-2 border-primaria rounded-full">
                           <img
@@ -265,8 +294,8 @@ export const ActivityOwnerModal = ({ isOpen, onClose, activityId }: any) => {
                       </div>
                     );
                   })}
-                  {activityTime < new Date().getTime() && (
-                    <div className=" flex flex-col items-center gap-2">
+                  {activityTime < new Date().getTime() && !activity?.completedAt && (
+                    <div className=" flex flex-col items-center gap-2 absolute bottom-4 right-0 bg-white  w-full">
                       <div className="flex items-center gap-2">
                         <UserCheck className="text-primaria" />
                         <p className="font-secundaria font-semibold">Código de check-in</p>
@@ -280,8 +309,8 @@ export const ActivityOwnerModal = ({ isOpen, onClose, activityId }: any) => {
               </div>
             </div>
 
-            {viewConfirm && (
-              <Dialog open={viewConfirm} onOpenChange={setViewConfirm}>
+            {viewConfirmDelete && (
+              <Dialog open={viewConfirmDelete} onOpenChange={setViewConfirmDelete}>
                 <DialogContent closeIcon={false} className="flex flex-col p-8 font-secundaria gap-9">
                   <DialogHeader>
                     <DialogTitle className="font-principal font-normal text-3xl text-[#171717]">
@@ -296,7 +325,7 @@ export const ActivityOwnerModal = ({ isOpen, onClose, activityId }: any) => {
                   <DialogFooter>
                     <Button
                       variant={"ghost"}
-                      onClick={() => setViewConfirm(false)}
+                      onClick={() => setViewConfirmDelete(false)}
                       className="border text-[1rem] p-6 font-bold border-[#171717] cursor-pointer"
                     >
                       Voltar
@@ -307,6 +336,34 @@ export const ActivityOwnerModal = ({ isOpen, onClose, activityId }: any) => {
                       className="p-6 text-[1rem] cursor-pointer"
                     >
                       Cancelar Atividade
+                    </Button>
+                  </DialogFooter>
+                </DialogContent>
+              </Dialog>
+            )}
+            {viewConfirmConclude && (
+              <Dialog open={viewConfirmConclude} onOpenChange={setViewConfirmConclude}>
+                <DialogContent closeIcon={false} className="flex flex-col p-8 font-secundaria gap-9">
+                  <DialogHeader className="flex flex-col items-center gap-2">
+                    <LandPlot size={60} className="text-primaria" />
+                    <DialogTitle className="font-principal font-normal text-3xl text-center text-[#171717]">
+                      Tem certeza que deseja finalizar essa atividade!?
+                    </DialogTitle>
+                  </DialogHeader>
+                  <DialogFooter className="w-full">
+                    <Button
+                      variant={"ghost"}
+                      onClick={() => setViewConfirmConclude(false)}
+                      className="border text-[1rem] p-6 font-bold border-[#171717] cursor-pointer mx-auto"
+                    >
+                      Voltar
+                    </Button>
+                    <Button
+                      variant={"default"}
+                      onClick={() => handleConcludeActivity()}
+                      className="p-6 text-[1rem] cursor-pointer bg-primaria mx-auto hover:bg-primaria/90"
+                    >
+                      Finalizar Atividade
                     </Button>
                   </DialogFooter>
                 </DialogContent>

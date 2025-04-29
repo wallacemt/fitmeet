@@ -1,5 +1,6 @@
 import {
   activityChekIn,
+  activityConclude,
   activitySubscribe,
   activityUnsubscribe,
   cancelActivity,
@@ -157,6 +158,17 @@ export const useActivities = () => {
       throw err;
     }
   };
+
+  const concludeActivity = async (activityId: string) => {
+    try {
+      const response = await activityConclude(activityId);
+      return response;
+    } catch (err: any) {
+      console.error(err.message);
+      throw err;
+    }
+  };
+
   return {
     getActivities,
     getActivitiesTypes,
@@ -172,6 +184,7 @@ export const useActivities = () => {
     subscribeActivity,
     unsubscribeActivity,
     updateStatusParticipant,
-    checkInActivity
+    checkInActivity,
+    concludeActivity,
   };
 };

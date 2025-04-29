@@ -164,7 +164,11 @@ export const getActivityParticipant = async (activityId: string): Promise<Partic
   }
 };
 
-export const updateParticipantStatus = async (activityId: string, partId: string, approved: boolean): Promise<string> => {
+export const updateParticipantStatus = async (
+  activityId: string,
+  partId: string,
+  approved: boolean
+): Promise<string> => {
   try {
     setAuthHeader(activitiesApi);
     const response = await activitiesApi.put(`/${activityId}/approve`, {
@@ -211,15 +215,24 @@ export const activityUnsubscribe = async (actId: string) => {
   }
 };
 
-
-export const activityChekIn = async (code: string, activityId:string) => {
+export const activityChekIn = async (code: string, activityId: string) => {
   try {
     setAuthHeader(activitiesApi);
-    const response = await activitiesApi.put(`/${activityId}/check-in`, {confirmationCode: code});
+    const response = await activitiesApi.put(`/${activityId}/check-in`, { confirmationCode: code });
     return response.data as string;
   } catch (err: any) {
     console.error(err.message);
     throw err;
   }
+};
 
-}
+export const activityConclude = async (activityId: string) => {
+  try {
+    setAuthHeader(activitiesApi);
+    const response = await activitiesApi.put(`/${activityId}/conclude`);
+    return response.data as string;
+  } catch (err: any) {
+    console.error(err.message);
+    throw err;
+  }
+};
