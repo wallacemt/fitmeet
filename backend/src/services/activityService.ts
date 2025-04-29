@@ -287,6 +287,8 @@ export const activityService = {
   getActivitiesById: async (id: string, userId: string) => {
     const activity = await activityRepository.getActivityById(id);
     if (!activity) throw { error: "Atividade nao encontrada.", status: 404 };
+
+
     const status = await activityParticipantsRepository.getUserSubscriptionStatus(userId!, activity.id);
     const userStatus: UserSubscriptionStatus =
       status?.approvedAt === null && status?.approved === false

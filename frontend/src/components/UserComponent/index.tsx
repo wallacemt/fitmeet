@@ -49,7 +49,7 @@ export const UserComponent = () => {
 
         <section className="w-full flex flex-col gap-4 items-center justify-center rounded-md">
           <Avatar>
-            <AvatarImage src={user?.avatar} alt="user image" className="w-52 h-52 rounded-full" />
+            <AvatarImage src={user?.avatar} alt="user image" className="w-52 h-52 object-cover rounded-full" />
             <AvatarFallback>WS</AvatarFallback>
           </Avatar>
           <h2 className="first-letter:uppercase font-principal font-normal text-4xl">{user?.name}</h2>
