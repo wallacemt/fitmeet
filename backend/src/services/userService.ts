@@ -29,7 +29,7 @@ export const userService = {
     };
   },
   updateAvatar: async (id: string, file: Express.Multer.File) => {
-    console.log(file);
+  
 
     if(file === undefined) {
       throw {error: "Imagem não encontrada.", status: 404}

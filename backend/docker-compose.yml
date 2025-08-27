@@ -25,20 +25,20 @@ services:
       - "/var/run/docker.sock:/var/run/docker.sock"  
     restart: always
 
-  api:
-    build: 
-          context: .
-          dockerfile: Dockerfile
-    ports:
-      - "3000:3000"
-    depends_on:
-      - postgresql
-    env_file:
-      - .env
-    environment:
-      DATABASE_URL: postgresql://postgres:postgres@postgresql:5432/bootcamp?schema=public
-      S3_ENDPOINT: http://localStack:4566 
-    restart: always
+  # api:
+  #   build: 
+  #         context: .
+  #         dockerfile: Dockerfile
+  #   ports:
+  #     - "3000:3000"
+  #   depends_on:
+  #     - postgresql
+  #   env_file:
+  #     - .env
+  #   environment:
+  #     DATABASE_URL: postgresql://postgres:postgres@postgresql:5432/bootcamp?schema=public
+  #     S3_ENDPOINT: http://localStack:4566 
+  #   restart: always
 
 
 volumes:

@@ -29,20 +29,91 @@ export async function seed() {
       {
         name: "Ciclismo",
         description: "Prática de pedalada em estrada ou trilha.",
-        image: `${BUCKET_URL}/ciclismo.jpg`
+        image: `${BUCKET_URL}/ciclismo.jpg`,
       },
       {
         name: "CrossFit",
         description: "Treinos de alta intensidade combinando diferentes modalidades.",
-        image: `${BUCKET_URL}/crossfit.jpg`
+        image: `${BUCKET_URL}/crossfit.jpg`,
       },
       {
         name: "Futebol",
         description: "Partidas de futebol entre amigos ou profissionais.",
-        image: `${BUCKET_URL}/futebooll.jpg`
-      }
+        image: `${BUCKET_URL}/futebooll.jpg`,
+      },
     ].filter((type) => !existingTypes.some((existingType: any) => existingType.name === type.name));
 
+    // Seed de usuários
+    const existingUsers = await prisma.user.findMany();
+    const usersToCreate = [
+      {
+        name: "Alice Silva",
+        email: "alice@exemplo.com",
+        cpf: "12345678901",
+        password: "senha123",
+        avatar: `${BUCKET_URL}/alice.jpg`,
+      },
+      {
+        name: "Bruno Costa",
+        email: "bruno@exemplo.com",
+        cpf: "23456789012",
+        password: "senha123",
+        avatar: `${BUCKET_URL}/bruno.jpg`,
+      },
+      {
+        name: "Carla Souza",
+        email: "carla@exemplo.com",
+        cpf: "34567890123",
+        password: "senha123",
+        avatar: `${BUCKET_URL}/carla.jpg`,
+      },
+    ].filter((user) => !existingUsers.some((existingUser: any) => existingUser.email === user.email));
+
+    if (usersToCreate.length > 0) {
+      await prisma.user.createMany({ data: usersToCreate });
+    }
+
+    const existingActivities = await prisma.activity.findMany();
+    const activityTypes = await prisma.activityType.findMany();
+    const users = await prisma.user.findMany();
+    const activitiesToCreate = [
+      {
+        title: "Yoga Matinal",
+        description: "Sessão de yoga para começar bem o dia.",
+        typeId: activityTypes.find((t: any) => t.name === "Yoga")?.id || "",
+        confirmationCode: "YOGA123",
+        image: `${BUCKET_URL}/yoga-activity.jpg`,
+        scheduledDate: new Date(Date.now() + 86400000),
+        creatorId: users.find((u: any) => u.email === "alice@exemplo.com")?.id || "",
+      },
+      {
+        title: "Corrida no Parque",
+        description: "Corrida leve para iniciantes.",
+        typeId: activityTypes.find((t: any) => t.name === "Corrida")?.id || "",
+        confirmationCode: "RUN456",
+        image: `${BUCKET_URL}/corrida-activity.jpg`,
+        scheduledDate: new Date(Date.now() + 172800000),
+        creatorId: users.find((u: any) => u.email === "bruno@exemplo.com")?.id || "",
+      },
+      {
+        title: "Musculação Avançada",
+        description: "Treino intenso para quem já pratica.",
+        typeId: activityTypes.find((t: any) => t.name === "Musculação")?.id || "",
+        confirmationCode: "MUSC789",
+        image: `${BUCKET_URL}/musculacao-activity.jpg`,
+        scheduledDate: new Date(Date.now() + 259200000),
+        creatorId: users.find((u: any) => u.email === "carla@exemplo.com")?.id || "",
+      },
+    ].filter(
+      (activity) =>
+        activity.typeId &&
+        activity.creatorId &&
+        !existingActivities.some((existingActivity: any) => existingActivity.title === activity.title)
+    );
+
+    if (activitiesToCreate.length > 0) {
+      await prisma.activity.createMany({ data: activitiesToCreate });
+    }
 
     const existingAchievements = await prisma.achievement.findMany();
     const achievements = [
@@ -66,7 +137,10 @@ export async function seed() {
         name: "Alterou Foto de Perfil",
         criterion: "Alterar a foto de perfil pela primeira vez.",
       },
-    ].filter((achievement) => !existingAchievements.some((existingAchievement: any) => existingAchievement.name === achievement.name));
+    ].filter(
+      (achievement) =>
+        !existingAchievements.some((existingAchievement: any) => existingAchievement.name === achievement.name)
+    );
 
     if (typesToCreate.length > 0) {
       await prisma.activityType.createMany({
@@ -74,7 +148,7 @@ export async function seed() {
       });
     }
 
-    if(achievements.length > 0) {
+    if (achievements.length > 0) {
       await prisma.achievement.createMany({
         data: achievements,
       });
