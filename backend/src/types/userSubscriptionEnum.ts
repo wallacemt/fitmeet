@@ -1,5 +1,6 @@
 export enum UserSubscriptionStatus {
     PENDING = "pending",
     ACCEPTED = "accepted",
-    REJECTED = "rejected"
+    REJECTED = "rejected",
+    NONE= "none"
 }

@@ -29,11 +29,15 @@ export const activityService = {
       activitiesRes.map(async (activity: any) => {
         const status = await activityParticipantsRepository.getUserSubscriptionStatus(userId!, activity.id);
         const userStatus: UserSubscriptionStatus =
-          status?.approvedAt === null
+          status === null
+            ? UserSubscriptionStatus.NONE
+            : status?.approvedAt === null && status?.approved === false
             ? UserSubscriptionStatus.PENDING
-            : status?.approved === false
+            : status?.approvedAt !== null && status?.approved === false
             ? UserSubscriptionStatus.REJECTED
-            : UserSubscriptionStatus.ACCEPTED;
+            : status?.approvedAt !== null && status?.approved === true
+            ? UserSubscriptionStatus.ACCEPTED
+            : UserSubscriptionStatus.PENDING;
         return {
           id: activity.id,
           title: activity.title,
@@ -90,8 +94,11 @@ export const activityService = {
     const activities = await Promise.all(
       activitiesRes.map(async (activity: any) => {
         const status = await activityParticipantsRepository.getUserSubscriptionStatus(userId!, activity.id);
+
         const userStatus: UserSubscriptionStatus =
-          status?.approvedAt === null && status?.approved === false
+          status === null
+            ? UserSubscriptionStatus.NONE
+            : status?.approvedAt === null && status?.approved === false
             ? UserSubscriptionStatus.PENDING
             : status?.approvedAt !== null && status?.approved === false
             ? UserSubscriptionStatus.REJECTED
@@ -121,8 +128,7 @@ export const activityService = {
             avatar: activity.creator.avatar,
           },
           isSelf: activity.creatorId === userId,
-          userSubscriptionStatus:
-            userId !== activity.creatorId ? (status?.approved === undefined ? null : userStatus) : undefined,
+          userSubscriptionStatus: userId !== activity.creatorId ? userStatus : undefined,
         };
       })
     );
@@ -288,7 +294,6 @@ export const activityService = {
     const activity = await activityRepository.getActivityById(id);
     if (!activity) throw { error: "Atividade nao encontrada.", status: 404 };
 
-
     const status = await activityParticipantsRepository.getUserSubscriptionStatus(userId!, activity.id);
     const userStatus: UserSubscriptionStatus =
       status?.approvedAt === null && status?.approved === false
@@ -353,7 +358,9 @@ export const activityService = {
       activityParticipant.map(async (participant) => {
         const status = await activityParticipantsRepository.getUserSubscriptionStatus(userId, activityId);
         const userStatus: UserSubscriptionStatus =
-          status?.approvedAt === null && status?.approved === false
+          status === null
+            ? UserSubscriptionStatus.NONE
+            : status?.approvedAt === null && status?.approved === false
             ? UserSubscriptionStatus.PENDING
             : status?.approvedAt !== null && status?.approved === false
             ? UserSubscriptionStatus.REJECTED

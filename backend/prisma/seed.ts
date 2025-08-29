@@ -1,4 +1,5 @@
 import { prisma } from "../src/prisma/prismaClient";
+import { activityType } from "../src/types/activityData";
 
 const BUCKET_URL = `http://localhost:4566/${process.env.BUCKET_NAME}`;
 
@@ -76,6 +77,12 @@ export async function seed() {
     const existingActivities = await prisma.activity.findMany();
     const activityTypes = await prisma.activityType.findMany();
     const users = await prisma.user.findMany();
+
+    const activityAddress = {
+      latitude: -13.010141,
+      longitude: -38.531398,
+    };
+
     const activitiesToCreate = [
       {
         title: "Yoga Matinal",
@@ -113,6 +120,16 @@ export async function seed() {
 
     if (activitiesToCreate.length > 0) {
       await prisma.activity.createMany({ data: activitiesToCreate });
+      const createdActivities = await prisma.activity.findMany();
+      createdActivities.forEach(async (newActivity) => {
+        await prisma.activityAddress.create({
+          data: {
+            activityId: newActivity.id,
+            latitude: activityAddress.latitude,
+            longitude: activityAddress.longitude,
+          },
+        });
+      });
     }
 
     const existingAchievements = await prisma.achievement.findMany();

@@ -16,9 +16,7 @@ const activityController = (server: Express) => {
         orderBy: string;
         order: string;
       };
-      
       const activities = await activityService.getActivitiesAll(filterBy, filter, orderBy, order, req.userId);
-      console.log(activities);
       res.status(200).json(activities);
     } catch (error) {
       console.error("Erro ao buscar atividades:", error);
@@ -164,8 +162,6 @@ const activityController = (server: Express) => {
         userId: req.userId,
         imageFile: req.file!,
       };
-
-      console.log(activityData);
 
       const [latitude, longitude] = req.body.address.split(",").map(Number);
       activityData.latitude = latitude;

@@ -262,6 +262,7 @@ export const activityRepository = {
         activityId,
         userId,
         approved,
+        approvedAt: approved ? new Date() : null,
       },
     });
   },

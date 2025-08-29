@@ -4,7 +4,7 @@
   "description": "Backend do projeto FitMeet feito como desafio do Bootcamp da Sysmap",
   "main": "index.js",
   "scripts": {
-    "dev": "npm run prod:up && npm run db && npm run db:generate && nodemon src/index.ts",
+    "dev": "npm run prod:up && npm run db && nodemon src/index.ts",
     "start": "prisma migrate dev && node ./dist/src/index.js",
     "prod:up": "docker compose up -d",
     "prod:down": "docker compose down",
