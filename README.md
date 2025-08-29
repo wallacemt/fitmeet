@@ -15,7 +15,6 @@
 - [`Contribuições`](#contribuições)
 - [`Licença`](#licença)
 
-
 <span id="sobre-o-projeto"></span>
 
 ## 📌 Sobre o Projeto
@@ -96,10 +95,19 @@ npm run android
 
 - ### Aréa de Login + Cadastro
 
-<div align='center'>
-    <img style="border-radius:1.5rem"  title='login' alt='login' src='https://res.cloudinary.com/dg9hqvlas/image/upload/v1745950427/Captura_de_tela_2025-04-29_140133_udwebe.png' /> &nbsp;
-    <img style="border-radius:1.5rem"  title='login' alt='cadastro' src='https://res.cloudinary.com/dg9hqvlas/image/upload/v1745950433/Captura_de_tela_2025-04-29_140158_wnikqd.png' /> &nbsp;
-</div>
+  ## Web
+
+    <div align='center'>
+        <img style="border-radius:1.5rem"  title='login' alt='login' src='https://res.cloudinary.com/dg9hqvlas/image/upload/v1745950427/Captura_de_tela_2025-04-29_140133_udwebe.png' /> &nbsp;
+        <img style="border-radius:1.5rem"  title='login' alt='cadastro' src='https://res.cloudinary.com/dg9hqvlas/image/upload/v1745950433/Captura_de_tela_2025-04-29_140158_wnikqd.png' /> &nbsp;
+    </div>
+
+  ## Mobile
+
+    <div align='center'>
+        <img style="border-radius:1.5rem"  title='login' alt='login' src='https://res.cloudinary.com/dg9hqvlas/image/upload/v1746563593/Captura_de_tela_2025-05-05_235512_evldfl.png' /> &nbsp;
+        <img style="border-radius:1.5rem"  title='login' alt='cadastro' src='https://res.cloudinary.com/dg9hqvlas/image/upload/v1746563593/Captura_de_tela_2025-05-06_102939_si6ypi.png' /> &nbsp;
+    </div>
 
 - ### Feed De Atividades
 

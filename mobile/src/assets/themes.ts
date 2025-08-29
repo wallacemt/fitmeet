@@ -1,0 +1,28 @@
+export const themes = {
+  fonts: {
+    DMSans: {
+      regular: 'DMSans-Regular',
+      medium: 'DMSans-Medium',
+      bold: 'DMSans-Bold',
+      semiBold: 'DMSans-SemiBold',
+    },
+    BebasNeue: {
+      regular: 'BebasNeue-Regular',
+    },
+  },
+  colors: {
+    black: '#171717',
+    white: '#fff',
+    softBlack: '#404040',
+    blackTiny: '#303841',
+    blackA1: ' #040415',
+    softWhite: '#a1a1a1',
+    whiteA1: '#d9d9d9',
+    whiteA2: '#d4d4d4',
+    whiteA3: '#e5e5e5',
+    whiteA4: '#d5d5d5',
+    perigo: '#e70008',
+    primary: '#00BC7D',
+    primaryA2: '#009966',
+  },
+};
