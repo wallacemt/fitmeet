@@ -217,6 +217,7 @@ export const activityService = {
           name: activity.creator.name,
           avatar: activity.creator.avatar,
         },
+        isSelf: true
       }))
     );
     return activities;
