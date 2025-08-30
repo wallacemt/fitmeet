@@ -31,13 +31,18 @@ import useAppContext from '../../hooks/useAppContext';
 import {useActivities} from '../../hooks/useActivities';
 import {useEffect, useState} from 'react';
 import {imageUriCorrect} from '../../utils/imageUriCorrect';
-import {ActivityButtonFactory} from '../../components/ActivityActionsButton';
+import {
+  ActivityButtonFactory,
+  ActivityCheckInButton,
+} from '../../components/ActivityActionsButton';
+import {CreateOrEditModal} from '../../components/Modais/CreateOrEditModal';
 
 type ActivityParams = RouteProp<MainStackParamList, 'Activity'>;
 
 export const Activity = () => {
   const route = useRoute<ActivityParams>();
   const {activity} = route.params;
+  const [showEditModal, setShowEditModal] = useState(false);
   if (!activity) return useTypedNavigation().goBack();
   const [activityDetails, setActivityDetails] = useState(activity);
   const {user} = useAppContext();
@@ -97,97 +102,128 @@ export const Activity = () => {
   async function handleCheckin(code: string) {
     // feature here!
   }
-  return (
-    <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
-      <View>
-        <TouchableOpacity
-          onPress={() => navigation.goBack()}
-          style={styles.back}>
-          <CaretLeft size={32} weight="bold" />
-        </TouchableOpacity>
-        {activityDetails.isSelf && (
-          <NotePencil size={32} weight="bold" style={styles.edit} />
-        )}
-      </View>
-      <View style={styles.header}>
-        <Image
-          source={{uri: imageUriCorrect(activityDetails.image || '')}}
-          style={styles.image}
-        />
-        <View style={styles.info}>
-          <View style={styles.acInfo}>
-            <CalendarDots color={themes.colors.primary} size={20} />
-            <Text style={styles.infoText}>
-              {activity?.completedAt
-                ? 'Atividade Finalizada'
-                : new Intl.DateTimeFormat('pt-BR', {
-                    day: '2-digit',
-                    month: '2-digit',
-                    year: 'numeric',
-                    hour: '2-digit',
-                    minute: '2-digit',
-                  }).format(
-                    new Date(activityDetails.scheduleDate || new Date()),
-                  )}
-            </Text>
-          </View>
-          <Text>|</Text>
-          <View>
-            <Text style={styles.infoText}>
-              {activity?.private ? 'Privado' : 'Publico'}
-            </Text>
-          </View>
-          <Text>|</Text>
-          <View style={styles.acInfo}>
-            <UsersThree size={20} color={themes.colors.primary} />
-            <Text style={styles.infoText}>
-              {activityDetails.participantCount || 0}
-            </Text>
-          </View>
-        </View>
-      </View>
-      <View style={styles.content}>
-        <View style={styles.desc}>
-          <Title fontSize={20}>{activityDetails.title}</Title>
-          <CustomText fontSize={12}>{activityDetails.description}</CustomText>
-        </View>
-        <View>
-          <Title fontSize={20}>Ponto de Encontro</Title>
-          <Maps
-            size={288}
-            locationPoint={{
-              latitude: activityDetails.address.latitude!,
-              longitude: activityDetails.address.longitude!,
-            }}
-          />
-        </View>
-        <View>
-          <Title fontSize={20}>Participantes</Title>
-          <ParticipantSection
-            participants={participants || []}
-            user={user}
-            activity={activityDetails}
-          />
-        </View>
 
-        {loading ? (
-          <View style={styles.loading}>
-            <ActivityIndicator size="large" color={themes.colors.black} />
-          </View>
-        ) : (
-          <ActivityButtonFactory
-            activity={activity}
-            participants={participants}
-            user={user}
-            onClick={{
-              subscribeActivity: handleSubscribe,
-              unsubscribeActivity: handleUnsubscribe,
-              checkInActivity: handleCheckin,
-            }}
-            loading={loading}
+  const isParticipant = participants.find(
+    par => par.userId === user?.id && par.subscriptionStatus === 'accepted',
+  );
+  return (
+    <>
+      <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
+        <View>
+          <TouchableOpacity
+            onPress={() => navigation.goBack()}
+            style={styles.back}>
+            <CaretLeft size={32} weight="bold" />
+          </TouchableOpacity>
+          {activityDetails.isSelf && (
+            <TouchableOpacity
+              onPress={() => setShowEditModal(true)}
+              style={styles.edit}>
+              <NotePencil size={32} weight="bold" />
+            </TouchableOpacity>
+          )}
+        </View>
+        <View style={styles.header}>
+          <Image
+            source={{uri: imageUriCorrect(activityDetails.image || '')}}
+            style={styles.image}
           />
-        )}
-      </View>
-    </ScrollView>
+          <View style={styles.info}>
+            <View style={styles.acInfo}>
+              <CalendarDots color={themes.colors.primary} size={20} />
+              <Text style={styles.infoText}>
+                {activity?.completedAt
+                  ? 'Atividade Finalizada'
+                  : new Intl.DateTimeFormat('pt-BR', {
+                      day: '2-digit',
+                      month: '2-digit',
+                      year: 'numeric',
+                      hour: '2-digit',
+                      minute: '2-digit',
+                    }).format(
+                      new Date(activityDetails.scheduleDate || new Date()),
+                    )}
+              </Text>
+            </View>
+            <Text>|</Text>
+            <View>
+              <Text style={styles.infoText}>
+                {activity?.private ? 'Privado' : 'Publico'}
+              </Text>
+            </View>
+            <Text>|</Text>
+            <View style={styles.acInfo}>
+              <UsersThree size={20} color={themes.colors.primary} />
+              <Text style={styles.infoText}>
+                {activityDetails.participantCount || 0}
+              </Text>
+            </View>
+          </View>
+        </View>
+        <View style={styles.content}>
+          {isParticipant &&
+            new Date(activityDetails.scheduleDate).getTime() <
+              new Date().getTime() &&
+            !activityDetails.completedAt &&
+            !participants.find(
+              par => par.userId === user?.id && par.confirmedAt,
+            ) && (
+              <ActivityCheckInButton
+                checkInFunc={handleCheckin}
+                loading={loading}
+              />
+            )}
+          <View style={styles.desc}>
+            <Title fontSize={20}>{activityDetails.title}</Title>
+            <CustomText fontSize={12}>{activityDetails.description}</CustomText>
+          </View>
+          <View>
+            <Title fontSize={20}>Ponto de Encontro</Title>
+            <Maps
+              size={288}
+              locationPoint={{
+                latitude: activityDetails.address.latitude!,
+                longitude: activityDetails.address.longitude!,
+              }}
+            />
+          </View>
+          <View>
+            <Title fontSize={20}>Participantes</Title>
+            <ParticipantSection
+              participants={participants || []}
+              user={user}
+              activity={activityDetails}
+            />
+          </View>
+
+          {loading ? (
+            <View style={styles.loading}>
+              <ActivityIndicator size="large" color={themes.colors.black} />
+            </View>
+          ) : (
+            <ActivityButtonFactory
+              activity={activityDetails}
+              participants={participants}
+              user={user}
+              onClick={{
+                subscribeActivity: handleSubscribe,
+                unsubscribeActivity: handleUnsubscribe,
+                checkInActivity: handleCheckin,
+              }}
+              loading={loading}
+            />
+          )}
+        </View>
+      </ScrollView>
+      {showEditModal && (
+        <CreateOrEditModal
+          visible={showEditModal}
+          onClose={() => setShowEditModal(false)}
+          type="edit"
+          activity={activityDetails}
+          update={fetchParticipants}
+        />
+      )}
+    </>
   );
 };

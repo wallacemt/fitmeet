@@ -70,7 +70,6 @@ export const userAvatarDefine = async (avatar: string): Promise<string> => {
       name: 'avatar.jpg',
     };
     formData.append('avatar', avatarFile);
-    console.log(formData);
     const response = await userApi.post('/avatar', formData, {
       headers: {
         ...header,

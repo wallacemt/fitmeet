@@ -7,6 +7,7 @@ import {
   HistoryActivity,
   Participant,
 } from '../types/ActivityData';
+import {ActivityTypeRequest} from '../hooks/useCreateOrEditActivity';
 
 const activityApi = axios.create({
   baseURL: `${baseURL}/activities`,
@@ -139,6 +140,79 @@ export const deleteParticiping = async (id: string) => {
     throw new Error(
       (error as {response: {data: {error: string}}}).response?.data?.error ||
         'Erro ao deletar subscrição',
+    );
+  }
+};
+
+export const postCreateActivity = async (data: ActivityTypeRequest) => {
+  try {
+    const header = await getHeaders({auth: true});
+
+    const activityImage = {
+      uri: data.image,
+      type: 'image/jpeg',
+      name: `${data.title}-${Date.now()}.jpg`,
+    };
+    const activityData = new FormData();
+    activityData.append('image', activityImage);
+    activityData.append('title', data.title);
+    activityData.append('description', data.description);
+    activityData.append('address', data.address);
+    activityData.append('typeId', data.typeId);
+    activityData.append('scheduledDate', data.scheduledDate);
+    activityData.append('private', data.private.toString());
+
+    const response = await activityApi.post('/new', activityData, {
+      headers: {
+        ...header,
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+    return response.data;
+  } catch (error) {
+    throw new Error(
+      (error as {response: {data: {error: string}}}).response?.data?.error ||
+        'Erro ao criar atividade',
+    );
+  }
+};
+
+export const postEditActivity = async (
+  data: ActivityTypeRequest,
+  activityId: string,
+) => {
+  try {
+    const header = await getHeaders({auth: true});
+
+    const activityImage = {
+      uri: data.image,
+      type: 'image/jpeg',
+      name: `${data.title}-${Date.now()}.jpg`,
+    };
+    const activityData = new FormData();
+    activityData.append('image', activityImage);
+    activityData.append('title', data.title);
+    activityData.append('description', data.description);
+    activityData.append('address', data.address);
+    activityData.append('typeId', data.typeId);
+    activityData.append('scheduledDate', data.scheduledDate);
+    activityData.append('private', data.private.toString());
+
+    const response = await activityApi.put(
+      `/${activityId}/update`,
+      activityData,
+      {
+        headers: {
+          ...header,
+          'Content-Type': 'multipart/form-data',
+        },
+      },
+    );
+    return response.data;
+  } catch (error) {
+    throw new Error(
+      (error as {response: {data: {error: string}}}).response?.data?.error ||
+        'Erro ao criar atividade',
     );
   }
 };

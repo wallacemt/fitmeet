@@ -67,6 +67,7 @@ interface ActivityTypeSectionProps {
   loading?: boolean;
   userPreference?: string[];
   update?: () => Promise<void>;
+  onChange?: (type: string) => void;
 }
 
 export const ActivityTypeSection = ({
@@ -76,6 +77,7 @@ export const ActivityTypeSection = ({
   loading = false,
   userPreference,
   update,
+  onChange,
 }: ActivityTypeSectionProps) => {
   const [selectedType, setSelectedType] = useState<ActivityType | null>(null);
   const [viewEdit, setViewEdit] = useState(false);
@@ -96,6 +98,7 @@ export const ActivityTypeSection = ({
 
   const handleTypeChange = (newType: ActivityType) => {
     setSelectedType(prev => (prev?.id === newType.id ? null : newType));
+    onChange && onChange(newType.id);
   };
 
   return (

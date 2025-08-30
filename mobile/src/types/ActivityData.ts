@@ -33,11 +33,18 @@ export interface ActivityCreator {
   avatar: string;
 }
 
+export interface ActivityType {
+  id: string;
+  name: string;
+  description: string;
+  image: string;
+}
+
 export interface ActivityResponse {
   id: string;
   title: string;
   description: string;
-  type: string;
+  type: string | ActivityType;
   image: string;
   confirmationCode?: string;
   participantCount: number;
@@ -114,7 +121,7 @@ export enum UserSubscriptionStatus {
   PENDING = 'pending',
   ACCEPTED = 'accepted',
   REJECTED = 'rejected',
-   NONE= "none"
+  NONE = 'none',
 }
 export interface ActivitySubResponse {
   id: string;

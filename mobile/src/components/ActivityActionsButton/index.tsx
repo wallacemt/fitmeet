@@ -126,7 +126,7 @@ const ActivityCountDownButton = ({activity, reset}: ButtonsProps) => {
   );
 };
 
-const ActivityCheckInButton = ({checkInFunc, loading}: ButtonsProps) => {
+export const ActivityCheckInButton = ({checkInFunc, loading}: ButtonsProps) => {
   const [code, setCode] = useState('');
   return (
     checkInFunc && (
@@ -148,7 +148,7 @@ const ActivityCheckInButton = ({checkInFunc, loading}: ButtonsProps) => {
               style={styles.button}
               disabled={loading}
               onPress={() => checkInFunc(code)}>
-              <Button.Label>Confirmar</Button.Label>
+              <Button.Label>Confirmar Presença</Button.Label>
             </Button.Root>
           </View>
         }
@@ -238,12 +238,7 @@ export const ActivityButtonFactory = ({
     !activity.completedAt &&
     !participants.find(par => par.userId === user?.id && par.confirmedAt)
   ) {
-    return (
-      <ActivityCheckInButton
-        checkInFunc={onClick.checkInActivity}
-        loading={loading}
-      />
-    );
+    return null
   }
   return (
     <ParticipationButton

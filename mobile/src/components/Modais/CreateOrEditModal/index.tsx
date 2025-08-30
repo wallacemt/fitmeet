@@ -1,4 +1,4 @@
-import {CaretLeft} from 'phosphor-react-native';
+import {CaretLeft, Upload} from 'phosphor-react-native';
 import {
   Dimensions,
   Image,
@@ -7,10 +7,11 @@ import {
   View,
   ScrollView,
   FlatList,
+  ActivityIndicator,
 } from 'react-native';
 import {styles} from './styles';
 import Title from '../../Title';
-import {useState} from 'react';
+import {useEffect, useState} from 'react';
 import {
   ImageLibraryOptions,
   launchImageLibrary,
@@ -21,31 +22,62 @@ import Maps from '../../Maps';
 import {Button} from '../../Button';
 import {themes} from '../../../assets/themes';
 import {ActivityTypeSection} from '../../ActivityTypeSection';
-import { imageUriCorrect } from '../../../utils/imageUriCorrect';
+import {imageUriCorrect} from '../../../utils/imageUriCorrect';
+import {useCreateOrEditActivity} from '../../../hooks/useCreateOrEditActivity';
+import {ActivityResponse} from '../../../types/ActivityData';
 
 const defaultImage = require('../../../assets/images/image-edit.png');
 interface CreateOrEditModalProps {
   visible: boolean;
   onClose: () => void;
   type: 'create' | 'edit';
+  activity?: ActivityResponse;
+  update?: () => Promise<void>;
 }
-export const  CreateOrEditModal = ({
+export const CreateOrEditModal = ({
   visible,
   onClose,
+  type,
+  activity,
+  update,
 }: CreateOrEditModalProps) => {
   const [image, setImage] = useState<string>(defaultImage);
   const [isPrivate, setIsPrivate] = useState<boolean>(false);
-
+  const {onChange, onSubmit, data, error, loading, onSubmitEdit} =
+    useCreateOrEditActivity();
   const pickImage = async () => {
     const options: ImageLibraryOptions = {
       mediaType: 'photo',
     };
     const response = await launchImageLibrary(options);
-
     if (response.assets) {
       setImage(response.assets[0].uri!);
+      onChange('image', `${response.assets[0].uri}`);
     }
   };
+
+  useEffect(() => {
+    if (type === 'edit') {
+      onChange('title', activity?.title || '');
+      onChange('description', activity?.description || '');
+      onChange(
+        'scheduledDate',
+        activity?.scheduleDate
+          ? new Date(activity.scheduleDate).toISOString().slice(0, -5)
+          : '',
+      );
+      onChange('address', [
+        activity?.address.latitude.toString() || '',
+        activity?.address.longitude.toString() || '',
+      ]);
+      onChange('private', activity?.private || true);
+      setImage(activity?.image || defaultImage);
+      onChange(
+        'typeId',
+        typeof activity?.type !== 'string' && activity?.type.id,
+      );
+    }
+  }, [type]);
 
   return (
     <Modal
@@ -58,7 +90,9 @@ export const  CreateOrEditModal = ({
           <TouchableOpacity onPress={onClose}>
             <CaretLeft size={34} weight="bold" />
           </TouchableOpacity>
-          <Title>Cadastrar Atividade</Title>
+          <Title>
+            {type === 'create' ? 'Cadastrar Atividade' : 'Editar Atividade'}
+          </Title>
         </View>
         <FlatList
           data={[]}
@@ -69,7 +103,9 @@ export const  CreateOrEditModal = ({
               <TouchableOpacity onPress={pickImage}>
                 <Image
                   source={
-                    image && image != defaultImage ? {uri: imageUriCorrect(image)} : defaultImage
+                    image && image != defaultImage
+                      ? {uri: imageUriCorrect(image)}
+                      : defaultImage
                   }
                   resizeMethod="resize"
                   resizeMode="cover"
@@ -80,32 +116,78 @@ export const  CreateOrEditModal = ({
                   }}
                 />
               </TouchableOpacity>
-              <Input.Root>
+
+              <Input.Root
+                isError={!!error?.find(err => err.field === 'title')?.message}>
                 <Input.Label required>Título</Input.Label>
-                <Input.Input placeholder="Ex.: Corrida" />
+                <Input.Input
+                  value={data.title}
+                  onChangeText={value => onChange('title', value)}
+                  placeholder="Ex.: Corrida"
+                />
+                <Input.ErrorMessage>
+                  {error?.find(err => err.field === 'title')?.message}
+                </Input.ErrorMessage>
               </Input.Root>
-              <Input.Root>
+
+              <Input.Root
+                isError={
+                  !!error?.find(err => err.field === 'description')?.message
+                }>
                 <Input.Label required>Descrição</Input.Label>
-                <Input.Input placeholder="Ex.: Corrida de 5km" />
+                <Input.Input
+                  value={data.description}
+                  onChangeText={value => onChange('description', value)}
+                  placeholder="Ex.: Corrida de 5km"
+                />
+                <Input.ErrorMessage>
+                  {error?.find(err => err.field === 'description')?.message}
+                </Input.ErrorMessage>
               </Input.Root>
-              <Input.Root>
+
+              <Input.Root
+                isError={
+                  !!error?.find(err => err.field === 'scheduledDate')?.message
+                }>
                 <Input.Label required>Data do Evento</Input.Label>
                 <DatePicker
-                  onChange={date => console.log(date.toISOString())}
+                  onChange={date =>
+                    onChange('scheduledDate', `${new Date(date).toISOString()}`)
+                  }
                 />
+                <Input.ErrorMessage>
+                  {error?.find(err => err.field === 'scheduledDate')?.message}
+                </Input.ErrorMessage>
               </Input.Root>
-              <Input.Root>
+
+              <Input.Root
+                isError={
+                  !!error?.find(err => err.field === 'address')?.message
+                }>
                 <Input.Label required>Ponto de Encontro</Input.Label>
                 <Maps
                   onLocationChange={(latitude, longitude) =>
-                    console.log(latitude, longitude)
+                    onChange('address', `${latitude}, ${longitude}`)
                   }
                 />
+                <Input.ErrorMessage>
+                  {error?.find(err => err.field === 'address')?.message}
+                </Input.ErrorMessage>
               </Input.Root>
-              <Input.Root style={{gap: 14}}>
+
+              <Input.Root
+                style={{gap: 14}}
+                isError={
+                  !!error?.find(err => err.field === 'private')?.message
+                }>
                 <Input.Label required>Visibilidade</Input.Label>
                 <View style={styles.visibility}>
-                  <Button.Root type="ghost" onPress={() => setIsPrivate(true)}>
+                  <Button.Root
+                    type="ghost"
+                    onPress={() => {
+                      setIsPrivate(true);
+                      onChange('private', true);
+                    }}>
                     <Button.Label
                       style={[
                         styles.btnVisibility,
@@ -115,7 +197,12 @@ export const  CreateOrEditModal = ({
                     </Button.Label>
                   </Button.Root>
 
-                  <Button.Root type="ghost" onPress={() => setIsPrivate(false)}>
+                  <Button.Root
+                    type="ghost"
+                    onPress={() => {
+                      setIsPrivate(false);
+                      onChange('private', false);
+                    }}>
                     <Button.Label
                       style={[
                         styles.btnVisibility,
@@ -126,13 +213,46 @@ export const  CreateOrEditModal = ({
                     </Button.Label>
                   </Button.Root>
                 </View>
-              </Input.Root>
-              <Input.Root>
-                <ActivityTypeSection type='selection' />
+                <Input.ErrorMessage>
+                  {error?.find(err => err.field === 'private')?.message}
+                </Input.ErrorMessage>
               </Input.Root>
 
-              <Button.Root style={{marginBottom: 65, height: 50}}>
-                <Button.Label>Salvar</Button.Label>
+              <Input.Root
+                isError={!!error?.find(err => err.field === 'typeId')?.message}>
+                <ActivityTypeSection
+                  type="selection"
+                  typeSelected={data.typeId}
+                  onChange={type => onChange('typeId', type)}
+                />
+                <Input.ErrorMessage>
+                  {error?.find(err => err.field === 'typeId')?.message}
+                </Input.ErrorMessage>
+              </Input.Root>
+
+              <Button.Root
+                style={{height: 44, marginBottom: 50}}
+                disabled={loading}
+                onPress={async () => {
+                  type === 'create'
+                    ? await onSubmit()
+                    : await onSubmitEdit(activity?.id || '', onClose, update!);
+                }}>
+                {loading ? (
+                  <View
+                    style={{
+                      flex: 1,
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                    }}>
+                    <ActivityIndicator
+                      size="large"
+                      color={themes.colors.black}
+                    />
+                  </View>
+                ) : (
+                  <Button.Label>Criar Atividade</Button.Label>
+                )}
               </Button.Root>
             </View>
           }
