@@ -88,12 +88,19 @@ export const activityService = {
       filterBy,
       filter,
       orderByField || "title",
-      direction || "asc"
+      direction || "asc",
+      userId || ""
     );
 
     const activities = await Promise.all(
       activitiesRes.map(async (activity: any) => {
         const status = await activityParticipantsRepository.getUserSubscriptionStatus(userId!, activity.id);
+        const scheduledDate = new Date(activity.scheduledDate);
+        const now = new Date();
+        const twentyFourHours = 24 * 60 * 60 * 1000;
+        if (scheduledDate.getTime() + twentyFourHours < now.getTime()) {
+          await activityService.completedActivity(activity.id, activity.creatorId);
+        }
 
         const userStatus: UserSubscriptionStatus =
           status === null
@@ -217,7 +224,7 @@ export const activityService = {
           name: activity.creator.name,
           avatar: activity.creator.avatar,
         },
-        isSelf: true
+        isSelf: true,
       }))
     );
     return activities;
@@ -347,7 +354,17 @@ export const activityService = {
       orderByField,
       direction
     );
-    return activityParticipant;
+    const activityParticipantWithActivityData = await Promise.all(
+      activityParticipant.map(async (participant) => {
+        const activity = await activityService.getActivitiesById(participant.activityId, participant.userId);
+        return {
+          ...participant,
+          activity,
+        };
+      })
+    );
+
+    return { activities: activityParticipantWithActivityData };
   },
 
   getParticipantsByActivityId: async (activityId: string, userId: string) => {

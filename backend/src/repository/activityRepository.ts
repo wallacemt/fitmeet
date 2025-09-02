@@ -37,7 +37,13 @@ export const activityRepository = {
     });
   },
 
-  getAllActivities: async (filterBy: string, filter: string, orderByField: string, direction: string) => {
+  getAllActivities: async (
+    filterBy: string,
+    filter: string,
+    orderByField: string,
+    direction: string,
+    creatorId: string
+  ) => {
     const where = filterBy
       ? {
           [filterBy]: { contains: filter, mode: "insensitive" },
@@ -48,7 +54,7 @@ export const activityRepository = {
       [orderByField]: direction,
     };
     return await prisma.activity.findMany({
-      where,
+      where: { ...where, NOT: { creatorId }, completedAt: null, deletedAt: null },
       orderBy,
       include: {
         type: true,

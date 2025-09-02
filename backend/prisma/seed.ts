@@ -1,6 +1,5 @@
 import { prisma } from "../src/prisma/prismaClient";
-import { activityType } from "../src/types/activityData";
-
+import bcrypt from "bcryptjs";
 const BUCKET_URL = `http://localhost:4566/${process.env.BUCKET_NAME}`;
 
 export async function seed() {
@@ -51,21 +50,21 @@ export async function seed() {
         name: "Alice Silva",
         email: "alice@exemplo.com",
         cpf: "12345678901",
-        password: "senha123",
+        password: await bcrypt.hash("senha123", 10),
         avatar: `${BUCKET_URL}/alice.jpg`,
       },
       {
         name: "Bruno Costa",
         email: "bruno@exemplo.com",
         cpf: "23456789012",
-        password: "senha123",
+        password: await bcrypt.hash("senha123", 10),
         avatar: `${BUCKET_URL}/bruno.jpg`,
       },
       {
         name: "Carla Souza",
         email: "carla@exemplo.com",
         cpf: "34567890123",
-        password: "senha123",
+        password: await bcrypt.hash("senha123", 10),
         avatar: `${BUCKET_URL}/carla.jpg`,
       },
     ].filter((user) => !existingUsers.some((existingUser: any) => existingUser.email === user.email));
