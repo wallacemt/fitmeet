@@ -65,7 +65,7 @@ export const useEdit = () => {
       const userPromise = editUser(values.name, values.email, values.password);
       const preferencePromise = definePreferences(values.preference);
       if (values.avatar) {
-        const avatarPromise = await editAvatar(values.avatar);
+        await editAvatar(values.avatar);
       }
       await Promise.all([userPromise, preferencePromise]);
       setMessage("Editado com sucesso!");

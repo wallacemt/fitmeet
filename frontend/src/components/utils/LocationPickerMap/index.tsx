@@ -56,7 +56,7 @@ const EnableCtrlZoomOnly = () => {
   return null;
 };
 
-export const LocationPickerMap = ({ value, onChange, isEdit }: LocationPickerMapProps) => {
+export const LocationPickerMap = ({ value, onChange }: LocationPickerMapProps) => {
   const [mapCenter, setMapCenter] = useState<[number, number]>([-23.549, -46.633]);
 
   useEffect(() => {

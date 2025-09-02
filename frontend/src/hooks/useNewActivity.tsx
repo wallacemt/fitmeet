@@ -1,7 +1,7 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { useContext, useState } from "react";
+import { useState } from "react";
 import { createActivity, editActivity } from "@/services/activitiesApi";
 import { ActivityTypeNew } from "@/types/ActivityData";
 

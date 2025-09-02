@@ -18,7 +18,7 @@ export const ActivityTypeComponent = ({ type }: any) => {
 
   const [recomendedType, setRecomendedType] = useState<ActivityResponse[]>();
   const [activityType, setActivityType] = useState<ActivityType[]>();
-  const [hasMore, setHasMore] = useState(false);
+  const [hasMore, _setHasMore] = useState(false);
   const useAct = useActivities();
 
   useEffect(() => {

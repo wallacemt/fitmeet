@@ -12,7 +12,7 @@ import Aos from "aos";
 export const HomeComponent = () => {
   const [recomendedActivities, setRecomendedActivites] = useState<ActivityResponse[]>();
   const [activityType, setActivityType] = useState<ActivityType[]>();
-  const [activities, setActivities] = useState<ActivityResponse[]>();
+  const [_activities, setActivities] = useState<ActivityResponse[]>();
   const [activitiesByType, setActivitiesByType] = useState<Record<string, ActivityResponse[]>>({});
 
   const useAct = useActivities();
