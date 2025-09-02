@@ -5,6 +5,7 @@ import {
   ActivitySubResponse,
   ActivityType,
   HistoryActivity,
+  HistoryActivityRes,
   Participant,
 } from '../types/ActivityData';
 import {ActivityTypeRequest} from '../hooks/useCreateOrEditActivity';
@@ -89,21 +90,19 @@ export const getActivitesParticipants = async (
   }
 };
 
-export const getUserHistoryActivites = async (): Promise<HistoryActivity[]> => {
-  try {
-    const header = await getHeaders({auth: true});
-    const response = await activityApi.get<HistoryActivity[]>(
-      '/user/participant',
-      {
+export const getUserHistoryActivites =
+  async (): Promise<HistoryActivityRes> => {
+    try {
+      const header = await getHeaders({auth: true});
+      const response = await activityApi.get('/user/participant/all', {
         headers: header,
-      },
-    );
-    return response.data;
-  } catch (err: any) {
-    console.error(err.message);
-    throw err;
-  }
-};
+      });
+      return response.data;
+    } catch (err: any) {
+      console.error(err.message);
+      throw err;
+    }
+  };
 
 export const postParticiping = async (
   id: string,
@@ -213,6 +212,67 @@ export const postEditActivity = async (
     throw new Error(
       (error as {response: {data: {error: string}}}).response?.data?.error ||
         'Erro ao criar atividade',
+    );
+  }
+};
+
+export const putCheckin = async (confirmationCode: string, id: string) => {
+  try {
+    const header = await getHeaders({auth: true});
+    const response = await activityApi.put(
+      `/${id}/check-in`,
+      {confirmationCode},
+      {
+        headers: header,
+      },
+    );
+    return response.data;
+  } catch (error) {
+    throw new Error(
+      (error as {response: {data: {error: string}}}).response?.data?.error ||
+        'Erro ao realizar check-in',
+    );
+  }
+};
+
+export const putConclude = async (id: string) => {
+  try {
+    const header = await getHeaders({auth: true});
+    const response = await activityApi.put(
+      `/${id}/conclude`,
+      {},
+      {
+        headers: header,
+      },
+    );
+    return response.data;
+  } catch (error) {
+    throw new Error(
+      (error as {response: {data: {error: string}}}).response?.data?.error ||
+        'Erro ao realizar conclusão',
+    );
+  }
+};
+
+export const putApproveOrNotParticipant = async (
+  participantId: string,
+  approved: boolean,
+  id: string,
+) => {
+  try {
+    const header = await getHeaders({auth: true});
+    const response = await activityApi.put(
+      `/${id}/conclude`,
+      {participantId, approved},
+      {
+        headers: header,
+      },
+    );
+    return response.data;
+  } catch (error) {
+    throw new Error(
+      (error as {response: {data: {error: string}}}).response?.data?.error ||
+        'Erro ao realizar conclusão',
     );
   }
 };

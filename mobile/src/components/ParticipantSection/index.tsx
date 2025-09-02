@@ -1,4 +1,11 @@
-import {FlatList, View, StyleSheet, Text, Image} from 'react-native';
+import {
+  FlatList,
+  View,
+  StyleSheet,
+  Text,
+  Image,
+  ActivityIndicator,
+} from 'react-native';
 import {ActivityResponse, Participant} from '../../types/ActivityData';
 import {CustomText} from '../CustomText';
 import {UserImageIcon} from '../UserImageIcon';
@@ -15,16 +22,29 @@ interface ParticipantSectionProps {
   participants: Participant[];
   user?: UserResponse;
   activity?: ActivityResponse;
+  loading?: boolean;
+  handleApproved?: (participantId: string, approved: boolean) => Promise<void>;
 }
 
 export const ParticipantSection = ({
   participants,
   user,
   activity,
+  loading,
+  handleApproved,
 }: ParticipantSectionProps) => {
   const groupedParticipants = [];
   for (let i = 0; i < participants.length; i += 3) {
     groupedParticipants.push(participants.slice(i, i + 3));
+  }
+
+  async function handleParticipantApproval(
+    participantId: string,
+    approved: boolean,
+  ) {
+    if (handleApproved) {
+      await handleApproved(participantId, approved);
+    }
   }
 
   return (
@@ -60,14 +80,30 @@ export const ParticipantSection = ({
                       : 'Participante'}
                   </CustomText>
                 </View>
-                {user?.id === ac.id && (
+                {user?.id !== ac.id && (
                   <View style={styles.buttonContainer}>
-                    <Button.Root style={styles.buttonInteraction}>
-                      <X color="#fff" size={16} />
-                    </Button.Root>
-                    <Button.Root style={styles.buttonInteraction}>
-                      <Heart color="#fff" size={16} />
-                    </Button.Root>
+                    {loading ? (
+                      <View>
+                        <ActivityIndicator color="#fff" size={16} />
+                      </View>
+                    ) : (
+                      <>
+                        <Button.Root
+                          style={styles.buttonInteraction}
+                          onPress={() =>
+                            handleParticipantApproval(ac.user.id!, false)
+                          }>
+                          <X color="#fff" size={16} />
+                        </Button.Root>
+                        <Button.Root
+                          style={styles.buttonInteraction}
+                          onPress={() =>
+                            handleParticipantApproval(ac.user.id!, true)
+                          }>
+                          <Heart color="#fff" size={16} />
+                        </Button.Root>
+                      </>
+                    )}
                   </View>
                 )}
               </View>

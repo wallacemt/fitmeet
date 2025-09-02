@@ -8,8 +8,9 @@ import {UserResponse} from '../../types/UserTypes';
 import {Button} from '../Button';
 import {styles} from './style';
 import {useEffect, useState} from 'react';
-import {FlatList, View} from 'react-native';
+import {FlatList, Text, View} from 'react-native';
 import {Input} from '../Input';
+import {themes} from '../../assets/themes';
 
 interface ButtonsProps {
   onClickFunc?: () => Promise<void>;
@@ -17,6 +18,7 @@ interface ButtonsProps {
   activity?: ActivityResponse;
   status?: UserSubscriptionStatus;
   checkInFunc?: (code: string) => void;
+  concludeFunc?: () => void;
   acStatus?: string;
   reset?: () => void;
 }
@@ -157,6 +159,50 @@ export const ActivityCheckInButton = ({checkInFunc, loading}: ButtonsProps) => {
   );
 };
 
+export const ActivityCheckInCode = ({
+  concludeFunc,
+  loading,
+  activity,
+}: ButtonsProps) => {
+  return (
+    concludeFunc && (
+      <FlatList
+        data={[]}
+        renderItem={() => <></>}
+        showsVerticalScrollIndicator={false}
+        ListHeaderComponent={
+          <View style={styles.form}>
+            <Input.Root>
+              <Input.Label required>Codigo de confirmação</Input.Label>
+              <View
+                style={{
+                  marginTop: 8,
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}>
+                <Text
+                  style={{
+                    fontWeight: 'bold',
+                    fontSize: 24,
+                    color: themes.colors.primary,
+                  }}>
+                  {activity?.confirmationCode}
+                </Text>
+              </View>
+            </Input.Root>
+            <Button.Root
+              style={styles.button}
+              disabled={loading}
+              onPress={() => concludeFunc()}>
+              <Button.Label>Concluir Atividade</Button.Label>
+            </Button.Root>
+          </View>
+        }
+      />
+    )
+  );
+};
+
 export const ActivityButtonFactory = ({
   activity,
   participants,
@@ -238,7 +284,7 @@ export const ActivityButtonFactory = ({
     !activity.completedAt &&
     !participants.find(par => par.userId === user?.id && par.confirmedAt)
   ) {
-    return null
+    return null;
   }
   return (
     <ParticipationButton

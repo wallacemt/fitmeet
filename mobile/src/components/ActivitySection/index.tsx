@@ -11,6 +11,8 @@ import {
   CalendarDots,
   CaretDown,
   CaretUp,
+  Check,
+  CheckCircle,
   Lock,
   LockSimple,
   UsersThree,
@@ -47,7 +49,11 @@ export const ActivityCard = ({
   return (
     <View style={styles.cardContainer}>
       <TouchableOpacity
-        onPress={() => navigation.navigate('Activity', {activity: activity})}>
+        onPress={() =>
+          navigation.navigate('Activity', {
+            activity: activity || history?.activity,
+          })
+        }>
         <Image
           source={{
             uri: imageUriCorrect(
@@ -72,7 +78,7 @@ export const ActivityCard = ({
               minute: '2-digit',
             }).format(
               new Date(
-                history?.activity?.scheduledDate ||
+                history?.activity?.scheduleDate ||
                   activity?.scheduleDate ||
                   new Date(),
               ),
@@ -91,6 +97,12 @@ export const ActivityCard = ({
         (activity?.private && (
           <View style={styles.lock}>
             <LockSimple size={20} color="#fff" />
+          </View>
+        ))}
+      {history?.activity?.completedAt ||
+        (activity?.completedAt && (
+          <View style={styles.lock}>
+            <Check size={20} color="#fff" />
           </View>
         ))}
     </View>

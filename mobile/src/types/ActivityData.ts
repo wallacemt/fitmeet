@@ -103,20 +103,12 @@ export interface HistoryActivity {
   approved: boolean;
   approvedAt: string | null;
   confirmedAt: string | null;
-  activity: {
-    id: string;
-    title: string;
-    description: string;
-    private: boolean;
-    deletedAt: string | null;
-    image: string;
-    scheduledDate: string;
-    type: Pick<ActivityType, 'id' | 'name' | 'description'>;
-    creator: ActivityCreator;
-  };
+  activity: ActivityResponse;
   participantCount: number;
 }
-
+export interface HistoryActivityRes {
+  activities: HistoryActivity[];
+}
 export enum UserSubscriptionStatus {
   PENDING = 'pending',
   ACCEPTED = 'accepted',

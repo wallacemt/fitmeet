@@ -26,7 +26,7 @@ export const Profile = () => {
   const fetchHistory = async () => {
     try {
       const response = await useAct.getHistoryActivitiesUser();
-      setUserHistory(response);
+      setUserHistory(response.activities);
     } catch (error) {
       return;
     }

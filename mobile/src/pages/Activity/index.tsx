@@ -34,6 +34,7 @@ import {imageUriCorrect} from '../../utils/imageUriCorrect';
 import {
   ActivityButtonFactory,
   ActivityCheckInButton,
+  ActivityCheckInCode,
 } from '../../components/ActivityActionsButton';
 import {CreateOrEditModal} from '../../components/Modais/CreateOrEditModal';
 
@@ -54,6 +55,9 @@ export const Activity = () => {
     loading,
     getActivityForId,
     unsubscribeActivity,
+    handleApprove,
+    handleCheckIn,
+    handleConclude,
   } = useActivities();
   const owner = {
     id: 'string',
@@ -100,9 +104,19 @@ export const Activity = () => {
     await fetchParticipants();
   }
   async function handleCheckin(code: string) {
-    // feature here!
+    await handleCheckIn(code, activityDetails.id);
+    await fetchParticipants();
   }
 
+  const handleApproved = async (participantId: string, approved: boolean) => {
+    await handleApprove(activityDetails.id, participantId, approved);
+    await fetchParticipants();
+  };
+
+  const handleConcludeAct = async () => {
+    await handleConclude(activityDetails.id);
+    await fetchParticipants();
+  };
   const isParticipant = participants.find(
     par => par.userId === user?.id && par.subscriptionStatus === 'accepted',
   );
@@ -173,6 +187,13 @@ export const Activity = () => {
                 loading={loading}
               />
             )}
+          {activityDetails.isSelf && !activityDetails.completedAt && (
+            <ActivityCheckInCode
+              activity={activityDetails}
+              concludeFunc={handleConcludeAct}
+              loading={loading}
+            />
+          )}
           <View style={styles.desc}>
             <Title fontSize={20}>{activityDetails.title}</Title>
             <CustomText fontSize={12}>{activityDetails.description}</CustomText>
@@ -193,6 +214,8 @@ export const Activity = () => {
               participants={participants || []}
               user={user}
               activity={activityDetails}
+              handleApproved={handleApproved}
+              loading={loading}
             />
           </View>
 

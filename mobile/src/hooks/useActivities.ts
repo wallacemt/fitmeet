@@ -8,6 +8,9 @@ import {
   getUserActivites,
   getUserHistoryActivites,
   postParticiping,
+  putApproveOrNotParticipant,
+  putCheckin,
+  putConclude,
 } from '../api/activityApi';
 import {
   ActivityResponse,
@@ -47,32 +50,31 @@ export const useActivities = () => {
       console.error('Erro ao buscar atividades:', error);
     }
   };
-  const getActivitiesTypes = async (): Promise<ActivityType[] | undefined> => {
+  const getActivitiesTypes = async () => {
     try {
       const response = await getTypeActivities();
       return response;
     } catch (error) {
       console.error('Erro ao buscar atividades:', error);
+      throw new Error('Erro ao buscar atividade');
     }
   };
-  const getHistoryActivitiesUser = async (): Promise<
-    HistoryActivity[] | undefined
-  > => {
+  const getHistoryActivitiesUser = async () => {
     try {
       const response = await getUserHistoryActivites();
       return response;
     } catch (error) {
       console.error('Erro ao buscar atividades:', error);
+      throw new Error('Erro ao buscar atividade');
     }
   };
-  const getParticipantsAcitivites = async (
-    id: string,
-  ): Promise<Participant[] | undefined> => {
+  const getParticipantsAcitivites = async (id: string) => {
     try {
       const response = await getActivitesParticipants(id);
       return response;
     } catch (error) {
       console.error('Erro ao buscar Participantes:', error);
+      throw new Error('Erro ao buscar participantes');
     }
   };
   const subscribeActivity = async (actId: string) => {
@@ -124,6 +126,85 @@ export const useActivities = () => {
       setLoading(false);
     }
   };
+
+  const handleConclude = async (id: string) => {
+    setLoading(true);
+    try {
+      const response = await putConclude(id);
+      showToast({
+        title: 'Atividade Concluída',
+        message: 'Parabéns, você concluiu esta atividade',
+        type: 'success',
+      });
+      return response;
+    } catch (err) {
+      showToast({
+        title: 'error',
+        message:
+          err instanceof Error ? err.message : 'Erro ao concluir a atividade.',
+        type: 'error',
+      });
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleCheckIn = async (code: string, id: string) => {
+    setLoading(true);
+    try {
+      const response = await putCheckin(code, id);
+      showToast({
+        title: 'Check-in Realizado',
+        message: 'Parabéns, você realizou o check-in nesta atividade',
+        type: 'success',
+      });
+      return response;
+    } catch (error) {
+      showToast({
+        title: 'error',
+        message:
+          error instanceof Error ? error.message : 'Erro ao realizar check-in.',
+        type: 'error',
+      });
+      throw error;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleApprove = async (
+    id: string,
+    participantId: string,
+    approved: boolean,
+  ) => {
+    setLoading(true);
+    try {
+      const response = await putApproveOrNotParticipant(
+        participantId,
+        approved,
+        id,
+      );
+      showToast({
+        title: 'Participante Atualizado',
+        message: `O participante foi ${approved ? 'aprovado' : 'rejeitado'}.`,
+        type: 'success',
+      });
+      return response;
+    } catch (error) {
+      showToast({
+        title: 'error',
+        message:
+          error instanceof Error
+            ? error.message
+            : 'Erro ao atualizar participante.',
+        type: 'error',
+      });
+      throw error;
+    } finally {
+      setLoading(false);
+    }
+  };
   return {
     getActivities,
     getActivitiesTypes,
@@ -133,6 +214,9 @@ export const useActivities = () => {
     loading,
     getActivityForId,
     subscribeActivity,
-    unsubscribeActivity
+    unsubscribeActivity,
+    handleApprove,
+    handleCheckIn,
+    handleConclude,
   };
 };
